@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { FaTrashAlt, FaSort } from "react-icons/fa";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
@@ -35,28 +35,7 @@ interface Reservation {
 }
 
 export default function Dashboard() {
-  const [reservations, setReservations] = useState<Reservation[]>([
-    {
-      _id: "1",
-      name: "Juan Pérez",
-      email: "juan@example.com",
-      date: "2024-12-30",
-      service: "Corte de Cabello",
-      message: "Preferiría un corte de cabello corto y moderno.",
-      status: "pendiente",
-    },
-    {
-      _id: "2",
-      name: "María López",
-      email: "maria@example.com",
-      date: "2024-12-31",
-      service: "Color de Cabello",
-      message: "Tengo el cabello oscuro y quiero algo más claro.",
-      status: "confirmada",
-    },
-    // Add more reservations here...
-  ]);
-
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState<keyof Reservation>("date");
@@ -64,6 +43,20 @@ export default function Dashboard() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const itemsPerPage = 5;
+
+  // Obtener reservas desde la API
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const response = await fetch("/api/reservas");
+        const { data } = await response.json();
+        setReservations(data || []);
+      } catch (error) {
+        console.error("Error al obtener reservas:", error);
+      }
+    };
+    fetchReservations();
+  }, []); // Solo se ejecuta al montar el componente
 
   const filteredReservations = useMemo(() => {
     return reservations.filter((reservation) =>
@@ -174,30 +167,36 @@ export default function Dashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedReservations.map((reservation) => (
-                <TableRow key={reservation._id}>
-                  <TableCell>{reservation.name}</TableCell>
-                  <TableCell>{reservation.email}</TableCell>
-                  <TableCell>{reservation.date}</TableCell>
-                  <TableCell>{reservation.service}</TableCell>
-                  <TableCell>{reservation.message}</TableCell>
-                  <TableCell>
-                    <Badge className={statusColors[reservation.status]}>
-                      {reservation.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(reservation._id)}
-                    >
-                      <FaTrashAlt className="mr-2 h-4 w-4" />
-                      Eliminar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {paginatedReservations.map((reservation, index) => {
+                // Usar el _id o una combinación de nombre y fecha si _id no está disponible
+                const key =
+                  reservation._id ||
+                  `${reservation.name}-${reservation.date}-${index}`;
+                return (
+                  <TableRow key={key}>
+                    <TableCell>{reservation.name}</TableCell>
+                    <TableCell>{reservation.email}</TableCell>
+                    <TableCell>{reservation.date}</TableCell>
+                    <TableCell>{reservation.service}</TableCell>
+                    <TableCell>{reservation.message}</TableCell>
+                    <TableCell>
+                      <Badge className={statusColors[reservation.status]}>
+                        {reservation.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(reservation._id)}
+                      >
+                        <FaTrashAlt className="mr-2 h-4 w-4" />
+                        Eliminar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>

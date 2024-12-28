@@ -10,7 +10,8 @@ interface IFormInput {
   email: string;
   date: string;
   message: string;
-  service: string;  // Para almacenar el servicio elegido
+  service: string; 
+  status: "pendiente", // Establece un valor predeterminado para el status
 
 }
 
@@ -23,9 +24,34 @@ export default function Home() {
     { name: 'Tratamientos Capilares', price: '€30' },
   ];
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    // Asegúrate de agregar el valor de 'status' antes de enviar
+    const dataWithStatus = {
+      ...data,
+      status: data.status || "pendiente", // Si no hay 'status' en los datos, asigna 'pendiente'
+    };
+  
+    try {
+      const response = await fetch('/api/reservas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataWithStatus),
+      });
+  
+      const result = await response.json();
+      if (response.ok) {
+        console.log('Reserva realizada con éxito:', result);
+      } else {
+        console.error('Error al realizar la reserva:', result.error);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
+  
+  
 
   return (
     <div className="font-sans text-black">
