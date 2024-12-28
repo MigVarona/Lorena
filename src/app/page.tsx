@@ -2,17 +2,17 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import Image from "next/image";
-import { FaPhoneAlt, FaCalendarAlt, FaEnvelope } from 'react-icons/fa';
+import { FaPhoneAlt, FaCalendarAlt, FaEnvelope, FaClock } from 'react-icons/fa';
 
 // Define el tipo de los datos del formulario
 interface IFormInput {
   name: string;
   email: string;
   date: string;
+  time: string; // Nuevo campo para el horario
   message: string;
   service: string; 
-  status: "pendiente", // Establece un valor predeterminado para el status
-
+  status: string; // Cambiado a string para manejar dinámicamente
 }
 
 export default function Home() {
@@ -25,10 +25,9 @@ export default function Home() {
   ];
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // Asegúrate de agregar el valor de 'status' antes de enviar
     const dataWithStatus = {
       ...data,
-      status: data.status || "pendiente", // Si no hay 'status' en los datos, asigna 'pendiente'
+      status: "pendiente", // Agregar estado predeterminado
     };
   
     try {
@@ -50,8 +49,6 @@ export default function Home() {
       console.error('Error en la solicitud:', error);
     }
   };
-  
-  
 
   return (
     <div className="font-sans text-black">
@@ -83,41 +80,6 @@ export default function Home() {
           <a href="#reserva" className="bg-black text-white py-3 px-6 rounded-full hover:bg-gray-800 transition">Reserva tu cita</a>
         </div>
       </section>
-
-            {/* Sección de Fotos de Ejemplo */}
-            <section id="fotos" className="bg-white p-8">
-        <h2 className="text-3xl font-semibold text-center mb-6">Mira Algunos de Nuestros Trabajos</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="w-full h-64 bg-gray-200 relative">
-            <Image
-              src="/ejemplo1.jpg"
-              alt="Ejemplo de corte de cabello"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-lg"
-            />
-          </div>
-          <div className="w-full h-64 bg-gray-200 relative">
-            <Image
-              src="/ejemplo2.jpg"
-              alt="Ejemplo de color de cabello"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-lg"
-            />
-          </div>
-          <div className="w-full h-64 bg-gray-200 relative">
-            <Image
-              src="/ejemplo3.jpg"
-              alt="Ejemplo de tratamiento capilar"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-lg"
-            />
-          </div>
-        </div>
-      </section>
-
 
       {/* Sección de Reserva */}
       <section id="reserva" className="min-h-screen bg-white p-8">
@@ -155,6 +117,16 @@ export default function Home() {
             />
           </div>
 
+          {/* Campo de hora */}
+          <div className="flex items-center space-x-2">
+            <FaClock className="h-5 w-5 text-black" />
+            <input
+              type="time"
+              {...register("time")}
+              className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          </div>
+
           {/* Campo de selección de servicio */}
           <div className="flex flex-col gap-2">
             <label htmlFor="service" className="text-lg font-semibold">Elige tu Servicio</label>
@@ -188,62 +160,7 @@ export default function Home() {
           </button>
         </form>
       </section>
-
       
-
-      {/* Sección de Servicios y Precios */}
-      <section id="servicios" className="bg-gray-50 p-8">
-        <h2 className="text-3xl font-semibold text-center mb-6">Nuestros Servicios</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-semibold mb-4">Corte de Cabello</h3>
-            <p className="mb-4">El corte de cabello más moderno y personalizado para ti.</p>
-            <p className="text-lg font-bold">€25</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-semibold mb-4">Color de Cabello</h3>
-            <p className="mb-4">Dale vida a tu cabello con nuestros colores profesionales.</p>
-            <p className="text-lg font-bold">€40</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-semibold mb-4">Tratamientos Capilares</h3>
-            <p className="mb-4">Recupera la salud de tu cabello con nuestros tratamientos exclusivos.</p>
-            <p className="text-lg font-bold">€30</p>
-          </div>
-        </div>
-      </section>
-
-
-      {/* Sección de Horarios */}
-      <section id="horarios" className="min-h-screen bg-white p-8">
-        <h2 className="text-3xl font-semibold text-center mb-6">Nuestros Horarios</h2>
-        <div className="max-w-3xl mx-auto text-center">
-          <ul className="space-y-4">
-            <li className="flex justify-between text-lg">
-              <span>Lunes</span> <span>9:00 AM - 6:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Martes</span> <span>9:00 AM - 6:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Miércoles</span> <span>9:00 AM - 6:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Jueves</span> <span>9:00 AM - 6:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Viernes</span> <span>9:00 AM - 7:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Sábado</span> <span>10:00 AM - 4:00 PM</span>
-            </li>
-            <li className="flex justify-between text-lg">
-              <span>Domingo</span> <span>Cerrado</span>
-            </li>
-          </ul>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-white text-black text-center p-4 border-t border-gray-300">
         <p>© {new Date().getFullYear()} Belleza Única. Todos los derechos reservados.</p>

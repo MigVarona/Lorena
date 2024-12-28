@@ -1,45 +1,59 @@
-import { supabase } from '../../../lib/supabaseClient'; // Asegúrate de que el path sea correcto
+import { supabase } from '../../../lib/supabaseClient';
 
 export async function POST(req: Request) {
   try {
-    const { name, email, date, message, service, status } = await req.json();
+    const body = await req.json();
 
+    // Validación de datos
+    const { name, email, date, message, service, status, time } = body;
+    if (!name || !email || !date || !service) {
+      return new Response(
+        JSON.stringify({ error: 'Faltan datos obligatorios' }),
+        { status: 400 }
+      );
+    }
+
+    // Inserción en la base de datos
     const { data, error } = await supabase
       .from('reservas')
-      .insert([
-        {
-          name,
-          email,
-          date,
-          message,
-          service,
-          status,
-        },
-      ]);
+      .insert([{ name, email, date, message, service, status, time }]);
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      console.error('Error al insertar en Supabase:', error.message);
+      return new Response(
+        JSON.stringify({ error: 'Error al insertar la reserva' }),
+        { status: 500 }
+      );
     }
 
     return new Response(JSON.stringify({ data }), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error al procesar la reserva' }), { status: 500 });
+    console.error('Error al procesar la solicitud:', error);
+    return new Response(
+      JSON.stringify({ error: 'Error al procesar la reserva' }),
+      { status: 500 }
+    );
   }
 }
 
-// Manejador de GET para obtener todas las reservas
 export async function GET() {
   try {
-    const { data, error } = await supabase
-      .from('reservas')
-      .select('*'); // Selecciona todas las columnas de la tabla "reservas"
+    const { data, error } = await supabase.from('reservas').select('*');
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      console.error('Error al obtener datos de Supabase:', error.message);
+      return new Response(
+        JSON.stringify({ error: 'Error al obtener las reservas' }),
+        { status: 500 }
+      );
     }
 
     return new Response(JSON.stringify({ data }), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Error al obtener las reservas' }), { status: 500 });
+    console.error('Error al procesar la solicitud:', error);
+    return new Response(
+      JSON.stringify({ error: 'Error al obtener las reservas' }),
+      { status: 500 }
+    );
   }
 }
