@@ -149,12 +149,13 @@ export default function Home() {
       <SobreMi />
       <Gallery />
       <PricingSection />
-      <div id="reserva">
-        <ReservationForm />
-      </div>
+ 
       <BlogSection />
   
       <InstagramGallery />
+      <div id="reserva">
+        <ReservationForm />
+      </div>
       <Footer />
     </div>
   );
