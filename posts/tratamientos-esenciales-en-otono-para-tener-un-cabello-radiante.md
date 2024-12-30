@@ -1,5 +1,6 @@
 ---
 title: "Tratamientos esenciales en otoño para tener un cabello radiante"
+slug: "tratamientos-esenciales-en-otono-para-tener-un-cabello-radiante"
 date: "2024-12-30"
 ---
 

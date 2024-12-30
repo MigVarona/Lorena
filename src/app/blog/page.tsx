@@ -26,9 +26,10 @@ export default function BlogPage() {
     const filePath = path.join(postsDirectory, filename);
     const fileContents = fs.readFileSync(filePath, "utf8");
     const { data, content } = matter(fileContents);
+    // Utiliza el slug desde los metadatos (si está disponible)
     return {
       ...data,
-      slug: filename.replace(/\.md$/, ""),
+      slug: data.slug || filename.replace(/\.md$/, ""),  // fallback al nombre del archivo si no hay slug
       content,
     };
   });
