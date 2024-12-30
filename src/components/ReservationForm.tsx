@@ -65,17 +65,15 @@ const ReservationForm = () => {
   };
 
   return (
-    <section id="reserva" className="py-16 bg-[#E5DEFF] px-4">
+    <section id="reserva" className="py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="backdrop-blur-sm bg-white/90 shadow-xl">
-        <CardHeader className="text-center space-y-2">
-  <CardTitle className="text-3xl font-bold text-black">
-    Reserva tu cita ahora
-  </CardTitle>
-  <p className="text-black">
-    Elige el servicio perfecto para ti
-  </p>
-</CardHeader>
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-3xl font-bold text-black">
+              Reserva tu cita ahora
+            </CardTitle>
+            <p className="text-black">Elige el servicio perfecto para ti</p>
+          </CardHeader>
 
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -124,9 +122,7 @@ const ReservationForm = () => {
                 {/* Servicio */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Servicio</label>
-                  <Select
-                    onValueChange={(value) => setValue("service", value)}
-                  >
+                  <Select onValueChange={(value) => setValue("service", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona un servicio" />
                     </SelectTrigger>

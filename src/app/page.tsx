@@ -9,7 +9,6 @@ import Footer from "../components/Footer";
 import Image from "next/image";
 import PricingSection from "../components/PricingSection";
 
-
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -19,7 +18,7 @@ export default function Home() {
 
   return (
     <div>
-      <nav className="bg-white text-black p-4 shadow-md fixed w-full z-50">
+      <nav className="bg-black text-white p-4 shadow-md fixed w-full z-50">
         <div className="flex justify-between items-center max-w-6xl mx-auto">
           <h1 className="text-2xl font-bold">Lorena Varona</h1>
 
@@ -148,12 +147,10 @@ export default function Home() {
       <Gallery />
       <PricingSection />
 
+      <BlogSection />
       <div id="reserva">
         <ReservationForm />
       </div>
-
-      <BlogSection />
-
       <Footer />
     </div>
   );
