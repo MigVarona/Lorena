@@ -5,7 +5,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Validación de datos
-    const { name, email, date, message, service, status, time } = body;
+    const { name, email, date, message, service, status, time, phone } = body;
     if (!name || !email || !date || !service) {
       return new Response(
         JSON.stringify({ error: 'Faltan datos obligatorios' }),
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     // Inserción en la base de datos
     const { data, error } = await supabase
       .from('reservas')
-      .insert([{ name, email, date, message, service, status, time }]);
+      .insert([{ name, email, date, message, service, status, time, phone }]);
 
     if (error) {
       console.error('Error al insertar en Supabase:', error.message);
