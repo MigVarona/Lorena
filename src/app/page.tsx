@@ -144,12 +144,12 @@ export default function Home() {
       <Gallery />
       <PricingSection />
       <BlogSection />
-      <InstagramGallery />
       <div id="reserva">
         <ReservationForm />
       </div>
+      <InstagramGallery />
+
       <Footer />
     </div>
   );
 }
-
