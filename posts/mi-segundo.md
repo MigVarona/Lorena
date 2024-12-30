@@ -1,5 +1,6 @@
 ---
 title: "Mi segundo post"
+slug: "mi-segundo"
 date: "2024-12-30"
 ---
 
