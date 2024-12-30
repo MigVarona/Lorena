@@ -11,6 +11,8 @@ import PricingSection from "../components/PricingSection";
 import SobreMi from "../components/SobreMi";
 import InstagramGallery from "../components/InstagramGallery";
 
+// Mantén los cambios sugeridos en tu código actual
+
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -40,31 +42,22 @@ export default function Home() {
           {/* Desktop menu */}
           <ul className="hidden md:flex gap-6">
             <li>
-              <a
-                href="#inicio"
-                className=" transition-colors"
-              >
+              <a href="#inicio" className="text-black transition-colors">
                 Inicio
               </a>
             </li>
             <li>
-              <a
-                href="#galeria"
-                className=" transition-colors"
-              >
+              <a href="#galeria" className="transition-colors">
                 Galería
               </a>
             </li>
             <li>
-              <a
-                href="#reserva"
-                className=" transition-colors"
-              >
+              <a href="#reserva" className="transition-colors">
                 Reserva
               </a>
             </li>
             <li>
-              <a href="#blog" className=" transition-colors">
+              <a href="#blog" className="transition-colors">
                 Blog
               </a>
             </li>
@@ -72,12 +65,12 @@ export default function Home() {
 
           {/* Mobile menu */}
           {isMenuOpen && (
-            <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden">
+            <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden z-50">
               <ul className="flex flex-col py-2">
                 <li>
                   <a
                     href="#inicio"
-                    className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
+                    className="block px-4 py-2 text-black hover:text-primary hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
                   >
                     Inicio
@@ -86,7 +79,7 @@ export default function Home() {
                 <li>
                   <a
                     href="#galeria"
-                    className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
+                    className="block px-4 py-2 text-black hover:text-primary hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
                   >
                     Galería
@@ -95,7 +88,7 @@ export default function Home() {
                 <li>
                   <a
                     href="#reserva"
-                    className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
+                    className="block px-4 py-2 text-black hover:text-primary hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
                   >
                     Reserva
@@ -104,7 +97,7 @@ export default function Home() {
                 <li>
                   <a
                     href="#blog"
-                    className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
+                    className="block px-4 py-2 text-black hover:text-primary hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
                   >
                     Blog
@@ -116,6 +109,7 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* Other sections */}
       <section
         id="inicio"
         className="relative bg-black text-white h-screen flex items-center justify-center"
@@ -149,9 +143,7 @@ export default function Home() {
       <SobreMi />
       <Gallery />
       <PricingSection />
- 
       <BlogSection />
-  
       <InstagramGallery />
       <div id="reserva">
         <ReservationForm />
@@ -160,3 +152,4 @@ export default function Home() {
     </div>
   );
 }
+
