@@ -2,27 +2,38 @@
 
 import { useForm, SubmitHandler } from "react-hook-form";
 import {
-  FaUser,
-  FaPhoneAlt,
-  FaCalendarAlt,
-  FaEnvelope,
-  FaClock,
-} from "react-icons/fa";
+  Calendar,
+  Clock,
+  Mail,
+  MessageSquare,
+  Phone,
+  User,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-// Define el tipo de los datos del formulario
 interface IFormInput {
   phone: string;
   name: string;
   email: string;
   date: string;
-  time: string; // Nuevo campo para el horario
+  time: string;
   message: string;
   service: string;
-  status: string; // Cambiado a string para manejar dinámicamente
+  status: string;
 }
 
 const ReservationForm = () => {
-  const { register, handleSubmit } = useForm<IFormInput>();
+  const { register, handleSubmit, setValue } = useForm<IFormInput>();
 
   const services = [
     { name: "Corte de Cabello", price: "€25" },
@@ -31,10 +42,7 @@ const ReservationForm = () => {
   ];
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const dataWithStatus = {
-      ...data,
-      status: "pendiente", // Agregar estado predeterminado
-    };
+    const dataWithStatus = { ...data, status: "pendiente" };
 
     try {
       const response = await fetch("/api/reservas", {
@@ -57,99 +65,132 @@ const ReservationForm = () => {
   };
 
   return (
-    <section id="reserva" className="min-h-screen bg-white p-8">
-      <h2 className="text-3xl font-semibold mb-6 text-center">
-        Reserva tu cita ahora
-      </h2>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 w-full max-w-md mx-auto"
-      >
-        {/* Campo de nombre */}
-        <div className="flex items-center space-x-2">
-          <FaUser className="h-5 w-5 text-black" />
-          <input
-            type="text"
-            placeholder="Nombre y Apellido"
-            {...register("name")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          />
-        </div>
-        {/* Campo de teléfono */}
-        <div className="flex items-center space-x-2">
-          <FaPhoneAlt className="h-5 w-5 text-black" />
-          <input
-            type="tel"
-            placeholder="Teléfono"
-            {...register("phone")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          />
-        </div>
-        {/* Campo de correo electrónico */}
-        <div className="flex items-center space-x-2">
-          <FaEnvelope className="h-5 w-5 text-black" />
-          <input
-            type="email"
-            placeholder="Correo Electrónico"
-            {...register("email")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          />
-        </div>
+    <section id="reserva" className="py-16 bg-[#E5DEFF] px-4">
+      <div className="max-w-4xl mx-auto">
+        <Card className="backdrop-blur-sm bg-white/90 shadow-xl">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Reserva tu cita ahora
+            </CardTitle>
+            <p className="text-muted-foreground">
+              Elige el servicio perfecto para ti
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Nombre */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nombre completo</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...register("name", { required: true })}
+                      className="pl-10"
+                      placeholder="Tu nombre y apellido"
+                    />
+                  </div>
+                </div>
 
-        {/* Campo de fecha */}
-        <div className="flex items-center space-x-2">
-          <FaCalendarAlt className="h-5 w-5 text-black" />
-          <input
-            type="date"
-            {...register("date")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          />
-        </div>
+                {/* Teléfono */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Teléfono</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...register("phone", { required: true })}
+                      className="pl-10"
+                      placeholder="Tu número de teléfono"
+                      type="tel"
+                    />
+                  </div>
+                </div>
 
-        {/* Campo de hora */}
-        <div className="flex items-center space-x-2">
-          <FaClock className="h-5 w-5 text-black" />
-          <input
-            type="time"
-            {...register("time")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          />
-        </div>
+                {/* Email */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...register("email", { required: true })}
+                      className="pl-10"
+                      placeholder="Tu correo electrónico"
+                      type="email"
+                    />
+                  </div>
+                </div>
 
-        {/* Campo de selección de servicio */}
-        <div className="flex flex-col gap-2">
-          <label htmlFor="service" className="text-lg font-semibold">
-            Elige tu Servicio
-          </label>
-          <select
-            id="service"
-            {...register("service")}
-            className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-          >
-            <option value="">Selecciona un servicio</option>
-            {services.map((service) => (
-              <option key={service.name} value={service.name}>
-                {service.name} - {service.price}
-              </option>
-            ))}
-          </select>
-        </div>
+                {/* Servicio */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Servicio</label>
+                  <Select
+                    onValueChange={(value) => setValue("service", value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona un servicio" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {services.map((service) => (
+                        <SelectItem key={service.name} value={service.name}>
+                          {service.name} - {service.price}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-        {/* Campo de comentarios adicionales */}
-        <textarea
-          placeholder="Comentarios adicionales"
-          {...register("message")}
-          className="border border-gray-300 rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-black"
-        />
+                {/* Fecha */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Fecha</label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...register("date", { required: true })}
+                      className="pl-10"
+                      type="date"
+                    />
+                  </div>
+                </div>
 
-        {/* Botón de enviar */}
-        <button
-          type="submit"
-          className="bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
-        >
-          Reservar
-        </button>
-      </form>
+                {/* Hora */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Hora</label>
+                  <div className="relative">
+                    <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      {...register("time", { required: true })}
+                      className="pl-10"
+                      type="time"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Comentarios adicionales */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Comentarios adicionales
+                </label>
+                <div className="relative">
+                  <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Textarea
+                    {...register("message")}
+                    className="pl-10 min-h-[100px]"
+                    placeholder="¿Alguna petición especial?"
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                Reservar Cita
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </section>
   );
 };
