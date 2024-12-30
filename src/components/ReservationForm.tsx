@@ -68,14 +68,15 @@ const ReservationForm = () => {
     <section id="reserva" className="py-16 bg-[#E5DEFF] px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="backdrop-blur-sm bg-white/90 shadow-xl">
-          <CardHeader className="text-center space-y-2">
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Reserva tu cita ahora
-            </CardTitle>
-            <p className="text-muted-foreground">
-              Elige el servicio perfecto para ti
-            </p>
-          </CardHeader>
+        <CardHeader className="text-center space-y-2">
+  <CardTitle className="text-3xl font-bold text-black">
+    Reserva tu cita ahora
+  </CardTitle>
+  <p className="text-black">
+    Elige el servicio perfecto para ti
+  </p>
+</CardHeader>
+
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

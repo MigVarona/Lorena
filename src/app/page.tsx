@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -7,6 +7,8 @@ import Gallery from "../components/Gallery";
 import BlogSection from "../components/BlogSection";
 import Footer from "../components/Footer";
 import Image from "next/image";
+import PricingSection from "../components/PricingSection";
+
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,9 +22,9 @@ export default function Home() {
       <nav className="bg-white text-black p-4 shadow-md fixed w-full z-50">
         <div className="flex justify-between items-center max-w-6xl mx-auto">
           <h1 className="text-2xl font-bold">Lorena Varona</h1>
-          
+
           {/* Hamburger menu button for mobile */}
-          <button 
+          <button
             onClick={toggleMenu}
             className="md:hidden"
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
@@ -37,17 +39,26 @@ export default function Home() {
           {/* Desktop menu */}
           <ul className="hidden md:flex gap-6">
             <li>
-              <a href="#inicio" className="hover:text-primary transition-colors">
+              <a
+                href="#inicio"
+                className="hover:text-primary transition-colors"
+              >
                 Inicio
               </a>
             </li>
             <li>
-              <a href="#galeria" className="hover:text-primary transition-colors">
+              <a
+                href="#galeria"
+                className="hover:text-primary transition-colors"
+              >
                 Galería
               </a>
             </li>
             <li>
-              <a href="#reserva" className="hover:text-primary transition-colors">
+              <a
+                href="#reserva"
+                className="hover:text-primary transition-colors"
+              >
                 Reserva
               </a>
             </li>
@@ -63,8 +74,8 @@ export default function Home() {
             <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden">
               <ul className="flex flex-col py-2">
                 <li>
-                  <a 
-                    href="#inicio" 
+                  <a
+                    href="#inicio"
                     className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
                     onClick={toggleMenu}
                   >
@@ -72,8 +83,8 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a 
-                    href="#galeria" 
+                  <a
+                    href="#galeria"
                     className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
                     onClick={toggleMenu}
                   >
@@ -81,8 +92,8 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a 
-                    href="#reserva" 
+                  <a
+                    href="#reserva"
                     className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
                     onClick={toggleMenu}
                   >
@@ -90,8 +101,8 @@ export default function Home() {
                   </a>
                 </li>
                 <li>
-                  <a 
-                    href="#blog" 
+                  <a
+                    href="#blog"
                     className="block px-4 py-2 hover:text-primary hover:bg-gray-100 transition-colors"
                     onClick={toggleMenu}
                   >
@@ -109,15 +120,14 @@ export default function Home() {
         className="relative bg-black text-white h-screen flex items-center justify-center"
       >
         <div className="absolute inset-0">
-        <Image
-  width={1200}
-  height={400}
-  src="/pexels-heyho-7195802.jpg"
-  alt="Peluquería de mujeres"
-  className="object-cover w-full h-full"
-  style={{ opacity: 0.7 }}
-/>
-
+          <Image
+            width={1200}
+            height={400}
+            src="/pexels-heyho-7195802.jpg"
+            alt="Peluquería de mujeres"
+            className="object-cover w-full h-full"
+            style={{ opacity: 0.7 }}
+          />
         </div>
         <div className="relative z-10 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -136,13 +146,14 @@ export default function Home() {
         </div>
       </section>
       <Gallery />
-      
+      <PricingSection />
+
       <div id="reserva">
         <ReservationForm />
       </div>
 
       <BlogSection />
-      
+
       <Footer />
     </div>
   );
