@@ -1,31 +1,36 @@
-"use client"
-
 import { useState } from 'react';
+import Image from 'next/image';
 
 const images = [
   {
-    url: "https://images.unsplash.com/photo-1560066984-138dadb4c035",
+    url: "/photo-1582095133179-bfd08e2fc6b3.jpg",
     title: "Corte y Peinado",
+    link: "/some-link-1",  // You can replace with actual URLs
   },
   {
-    url: "https://images.unsplash.com/photo-1522337660859-02fbefca4702",
+    url: "/photo-1522337660859-02fbefca4702.jpg",
     title: "Coloración",
+    link: "/some-link-2",
   },
   {
-    url: "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1",
+    url: "/photo-1595476108010-b4d1f102b1b1.jpg",
     title: "Tratamientos",
+    link: "/some-link-3",
   },
   {
-    url: "https://images.unsplash.com/photo-1562322140-8baeececf3df",
+    url: "/photo-1562322140-8baeececf3df.jpg",
     title: "Peinados de Novia",
+    link: "/some-link-4",
   },
   {
-    url: "https://images.unsplash.com/photo-1582095133179-bfd08e2fc6b3",
+    url: "/photo-1595476108010-b4d1f102b1b1.jpg",
     title: "Extensiones",
+    link: "/some-link-5",
   },
   {
     url: "/pexels-andersonguerra-1115128.jpg",
     title: "Maquillaje",
+    link: "/some-link-6",
   },
 ];
 
@@ -45,11 +50,15 @@ const Gallery = () => {
               className="relative overflow-hidden rounded-lg shadow-lg group cursor-pointer"
               onClick={() => setSelectedImage(image.url)}
             >
-              <img
-                src={image.url}
-                alt={image.title}
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-              />
+              <a href={image.link} target="_blank" rel="noopener noreferrer">
+                <Image
+                  width={1200}
+                  height={400}
+                  src={image.url}
+                  alt={image.title}
+                  className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                />
+              </a>
               <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                 <h3 className="text-white text-xl font-semibold">{image.title}</h3>
               </div>
@@ -57,7 +66,6 @@ const Gallery = () => {
           ))}
         </div>
       </div>
-      
     </section>
   );
 };
