@@ -8,6 +8,8 @@ import BlogSection from "../components/BlogSection";
 import Footer from "../components/Footer";
 import Image from "next/image";
 import PricingSection from "../components/PricingSection";
+import SobreMi from "../components/SobreMi";
+import InstagramGallery from "../components/InstagramGallery";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function Home() {
             <li>
               <a
                 href="#inicio"
-                className="hover:text-primary transition-colors"
+                className=" transition-colors"
               >
                 Inicio
               </a>
@@ -48,7 +50,7 @@ export default function Home() {
             <li>
               <a
                 href="#galeria"
-                className="hover:text-primary transition-colors"
+                className=" transition-colors"
               >
                 Galería
               </a>
@@ -56,13 +58,13 @@ export default function Home() {
             <li>
               <a
                 href="#reserva"
-                className="hover:text-primary transition-colors"
+                className=" transition-colors"
               >
                 Reserva
               </a>
             </li>
             <li>
-              <a href="#blog" className="hover:text-primary transition-colors">
+              <a href="#blog" className=" transition-colors">
                 Blog
               </a>
             </li>
@@ -144,13 +146,15 @@ export default function Home() {
           </a>
         </div>
       </section>
+      <SobreMi />
       <Gallery />
       <PricingSection />
-
-      <BlogSection />
       <div id="reserva">
         <ReservationForm />
       </div>
+      <BlogSection />
+  
+      <InstagramGallery />
       <Footer />
     </div>
   );
