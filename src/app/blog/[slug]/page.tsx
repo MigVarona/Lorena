@@ -4,21 +4,13 @@ import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
 import { Card, CardContent } from "@/components/ui/card";
-
-export const metadata = {
-  title: "Post individual",
-  description: "Lee la entrada completa del blog",
-};
-
-type Params = Promise<{ slug: string }>;
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+import Head from "next/head"; // Import the Head component
 
 export default async function Page(props: {
-  params: Params;
-  searchParams: SearchParams;
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const params = await props.params;
-  const { slug } = params;
+  const { slug } = props.params;
 
   const postsDirectory = path.join(process.cwd(), "posts");
   const filePath = path.join(postsDirectory, `${slug}.md`);
@@ -44,31 +36,42 @@ export default async function Page(props: {
   const processedContent = await remark().use(html).process(content);
   const contentHtml = processedContent.toString();
 
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <Card className="overflow-hidden">
-        <CardContent className="p-8">
-          {/* Header Section */}
-          <div className="mb-8 text-center">
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
-              {data.title}
-            </h1>
-            <time className="text-muted-foreground">
-              {new Date(data.date).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </time>
-          </div>
+  // Modificar el título dinámicamente
+  const pageTitle = data.title || slug.replace(/-/g, " ").toUpperCase();
 
-          {/* Content Section */}
-          <div 
-            className="prose prose-lg max-w-none dark:prose-invert"
-            dangerouslySetInnerHTML={{ __html: contentHtml }} 
-          />
-        </CardContent>
-      </Card>
-    </div>
+  return (
+    <>
+      {/* Use the Next.js Head component to modify the title */}
+      <Head>
+        <title>{pageTitle}</title>
+        <meta name="description" content={`Lee la entrada completa del blog: ${pageTitle}`} />
+      </Head>
+
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Card className="overflow-hidden">
+          <CardContent className="p-8">
+            {/* Header Section */}
+            <div className="mb-8 text-center">
+              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+                {pageTitle}
+              </h1>
+              <time className="text-muted-foreground">
+                {new Date(data.date).toLocaleDateString('es-ES', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </time>
+            </div>
+
+            {/* Content Section */}
+            <div 
+              className="prose prose-lg max-w-none dark:prose-invert"
+              dangerouslySetInnerHTML={{ __html: contentHtml }} 
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }
