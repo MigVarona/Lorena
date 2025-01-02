@@ -10,11 +10,7 @@ export const metadata = {
 };
 
 // Corrige el tipo para que coincida con lo que Next.js espera
-export default async function PostPage({
-  params,
-}: {
-  params: Awaited<{ slug: string }>;
-}) {
+export default async function PostPage({ params }: { params: Awaited<{ slug: string }> }) {
   const { slug } = params; // Extrae el slug directamente
 
   const postsDirectory = path.join(process.cwd(), "posts");
