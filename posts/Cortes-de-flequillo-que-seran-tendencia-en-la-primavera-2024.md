@@ -12,7 +12,7 @@ La primavera está a la vuelta de la esquina y, con ella, la oportunidad de reno
 
 ### Cortes de flequillo que más realizo esta primavera en Lorena Varona
 
-- **Flequillo cortina:**  
+- **Flequillo cortina**  
   Un clásico que sigue en boga, ideal para quienes buscan un look desenfadado y femenino. Se caracteriza por su longitud y apertura, permitiendo peinarlo de lado o al centro.
 
 - **Flequillo Bardot:**  

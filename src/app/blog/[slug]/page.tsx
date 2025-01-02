@@ -52,10 +52,10 @@ export default async function Page(props: {
           <CardContent className="p-8">
             {/* Header Section */}
             <div className="mb-8 text-center">
-              <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
                 {pageTitle}
               </h1>
-              <time className="text-muted-foreground">
+              <time className="text-muted-foreground text-sm sm:text-base">
                 {new Date(data.date).toLocaleDateString('es-ES', {
                   year: 'numeric',
                   month: 'long',
@@ -66,7 +66,7 @@ export default async function Page(props: {
 
             {/* Content Section */}
             <div 
-              className="prose prose-lg max-w-none dark:prose-invert"
+              className="prose prose-lg max-w-none dark:prose-invert text-left" // Asegura que el texto esté alineado a la izquierda
               dangerouslySetInnerHTML={{ __html: contentHtml }} 
             />
           </CardContent>

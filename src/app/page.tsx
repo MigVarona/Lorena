@@ -57,7 +57,7 @@ export default function Home() {
               </a>
             </li>
             <li>
-              <a href="#blog" className="transition-colors">
+              <a href="/blog" className="transition-colors">
                 Blog
               </a>
             </li>
