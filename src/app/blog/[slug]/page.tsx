@@ -9,13 +9,17 @@ export const metadata = {
   description: "Lee la entrada completa del blog",
 };
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params; // No es necesario usar `await` aquí.
+interface PageProps {
+  params: { slug: string }; // Define explícitamente el tipo de los params
+}
+
+export default async function PostPage({ params }: PageProps) {
+  const { slug } = params;
 
   const postsDirectory = path.join(process.cwd(), "posts");
   const filePath = path.join(postsDirectory, `${slug}.md`);
 
-  console.log("File Path:", filePath); // Para depuración
+  console.log("File Path:", filePath);
 
   // Verifica si el archivo existe
   if (!fs.existsSync(filePath)) {
