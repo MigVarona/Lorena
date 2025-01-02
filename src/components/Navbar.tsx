@@ -31,22 +31,22 @@ export default function Navbar() {
         {/* Desktop menu */}
         <ul className="hidden md:flex gap-6">
           <li>
-            <a href="#inicio" className="text-white transition-colors">
+            <a href="/" className="text-white transition-colors">
               Inicio
             </a>
           </li>
           <li>
-            <a href="#galeria" className="transition-colors">
+            <a href="/#galeria" className="transition-colors">
               Galería
             </a>
           </li>
           <li>
-            <a href="#reserva" className="transition-colors">
+            <a href="/#reserva" className="transition-colors">
               Reserva
             </a>
           </li>
           <li>
-            <a href="#blog" className="transition-colors">
+            <a href="/blog" className="transition-colors">
               Blog
             </a>
           </li>
@@ -58,7 +58,7 @@ export default function Navbar() {
             <ul className="flex flex-col py-2">
               <li>
                 <a
-                  href="#inicio"
+                  href="/inicio"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
@@ -67,7 +67,7 @@ export default function Navbar() {
               </li>
               <li>
                 <a
-                  href="#galeria"
+                  href="/#galeria"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
@@ -76,7 +76,7 @@ export default function Navbar() {
               </li>
               <li>
                 <a
-                  href="#reserva"
+                  href="/#reserva"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
@@ -85,7 +85,7 @@ export default function Navbar() {
               </li>
               <li>
                 <a
-                  href="#blog"
+                  href="/blog"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >

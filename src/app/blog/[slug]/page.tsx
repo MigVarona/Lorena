@@ -69,7 +69,7 @@ export default async function Page(props: {
         <meta name="description" content={`Lee la entrada completa del blog: ${pageTitle}`} />
       </Head>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className=" mx-auto px-4 py-8 max-w-4xl">
         <Card className="overflow-hidden">
           <CardContent className="p-8">
             {/* Header Section */}
