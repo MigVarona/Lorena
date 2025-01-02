@@ -9,19 +9,19 @@ export const metadata = {
   description: "Lee la entrada completa del blog",
 };
 
-interface PageProps {
-  params: { slug: string }; // Define explícitamente el tipo de los params
-}
-
-export default async function PostPage({ params }: PageProps) {
-  const { slug } = params;
+// Corrige el tipo para que coincida con lo que Next.js espera
+export default async function PostPage({
+  params,
+}: {
+  params: Awaited<{ slug: string }>;
+}) {
+  const { slug } = params; // Extrae el slug directamente
 
   const postsDirectory = path.join(process.cwd(), "posts");
   const filePath = path.join(postsDirectory, `${slug}.md`);
 
   console.log("File Path:", filePath);
 
-  // Verifica si el archivo existe
   if (!fs.existsSync(filePath)) {
     return (
       <div>
@@ -33,7 +33,6 @@ export default async function PostPage({ params }: PageProps) {
   const fileContents = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContents);
 
-  // Convierte el contenido Markdown a HTML
   const processedContent = await remark().use(html).process(content);
   const contentHtml = processedContent.toString();
 
