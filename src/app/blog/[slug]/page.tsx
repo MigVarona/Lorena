@@ -10,16 +10,20 @@ export const metadata = {
 };
 
 export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = await params; // Aquí se hace el await correctamente
+  const { slug } = params; // No es necesario usar `await` aquí.
 
   const postsDirectory = path.join(process.cwd(), "posts");
   const filePath = path.join(postsDirectory, `${slug}.md`);
 
-  console.log("File Path:", filePath); // Verifica la ruta del archivo
+  console.log("File Path:", filePath); // Para depuración
 
   // Verifica si el archivo existe
   if (!fs.existsSync(filePath)) {
-    return <div>Post no encontrado en: {filePath}</div>;
+    return (
+      <div>
+        Post no encontrado en: {filePath}
+      </div>
+    );
   }
 
   const fileContents = fs.readFileSync(filePath, "utf8");
