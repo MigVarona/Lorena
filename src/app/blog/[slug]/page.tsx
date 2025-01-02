@@ -6,11 +6,15 @@ import html from "remark-html";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head"; // Import the Head component
 
-export default async function Page(props: {
+// Cambié la tipificación de los parámetros
+export default async function Page({
+  params, // Directamente params como un objeto, no promesa
+  searchParams
+}: {
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { slug } = props.params;
+  const { slug } = params;
 
   const postsDirectory = path.join(process.cwd(), "posts");
   const filePath = path.join(postsDirectory, `${slug}.md`);
@@ -66,7 +70,7 @@ export default async function Page(props: {
 
             {/* Content Section */}
             <div 
-              className="prose prose-lg max-w-none dark:prose-invert text-left" // Asegura que el texto esté alineado a la izquierda
+              className="prose prose-lg max-w-none dark:prose-invert text-left" 
               dangerouslySetInnerHTML={{ __html: contentHtml }} 
             />
           </CardContent>
