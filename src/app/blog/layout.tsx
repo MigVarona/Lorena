@@ -11,7 +11,7 @@ export default function BlogLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen text-gray-800">
+    <div className="min-h-screen text-gray-900">
       <Navbar /> {/* Aquí se incluye el navbar */}
       <main className="mx-auto px-4 py-8 pt-20 max-w-7xl">
         {/* Aquí se establece un máximo ancho para evitar que el contenido se extienda demasiado */}
