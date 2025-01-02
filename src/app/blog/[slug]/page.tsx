@@ -6,14 +6,32 @@ import html from "remark-html";
 import { Card, CardContent } from "@/components/ui/card";
 import Head from "next/head"; // Import the Head component
 
-// Cambié la tipificación de los parámetros
-export default async function Page({
-  params, // Directamente params como un objeto, no promesa
-  searchParams
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+// Cambié los tipos de `params` y `searchParams` a promesas
+type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+// Definimos las funciones como `async`
+export async function generateMetadata(props: {
+  params: Params;
+  searchParams: SearchParams;
 }) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+  const slug = params.slug;
+  const query = searchParams.query;
+
+  return {
+    title: `Post: ${slug}`, // Puedes personalizar la metadata aquí
+    description: `Descripción para el post: ${slug}`,
+  };
+}
+
+export default async function Page(props: {
+  params: Params;
+  searchParams: SearchParams;
+}) {
+  const params = await props.params; // Asegúrate de resolver la promesa
+  const searchParams = await props.searchParams; // Asegúrate de resolver la promesa
   const { slug } = params;
 
   const postsDirectory = path.join(process.cwd(), "posts");
