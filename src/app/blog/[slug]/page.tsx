@@ -21,7 +21,7 @@ export async function generateMetadata(props: {
   const query = searchParams.query;
 
   return {
-    title: `Post: ${slug}`, // Puedes personalizar la metadata aquí
+    title: `${slug}`, // Puedes personalizar la metadata aquí
     description: `Descripción para el post: ${slug}`,
   };
 }

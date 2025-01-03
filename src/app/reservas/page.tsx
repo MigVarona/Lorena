@@ -29,6 +29,8 @@ interface Reservation {
   name: string;
   email: string;
   date: string;
+  phone: string;
+  time: string;
   service: string;
   message: string;
   status: "pendiente" | "confirmada" | "cancelada";
@@ -42,7 +44,7 @@ export default function Dashboard() {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   // Obtener reservas desde la API
   useEffect(() => {
@@ -152,6 +154,12 @@ export default function Dashboard() {
                 </TableHead>
                 <TableHead
                   className="cursor-pointer"
+                  onClick={() => handleSort("time")}
+                >
+                  Hora <FaSort className="inline ml-1" />
+                </TableHead>
+                <TableHead
+                  className="cursor-pointer"
                   onClick={() => handleSort("service")}
                 >
                   Servicio <FaSort className="inline ml-1" />
@@ -163,12 +171,12 @@ export default function Dashboard() {
                 >
                   Estado <FaSort className="inline ml-1" />
                 </TableHead>
+                <TableHead>Teléfono</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedReservations.map((reservation, index) => {
-                // Usar el _id o una combinación de nombre y fecha si _id no está disponible
                 const key =
                   reservation._id ||
                   `${reservation.name}-${reservation.date}-${index}`;
@@ -177,6 +185,7 @@ export default function Dashboard() {
                     <TableCell>{reservation.name}</TableCell>
                     <TableCell>{reservation.email}</TableCell>
                     <TableCell>{reservation.date}</TableCell>
+                    <TableCell>{reservation.time}</TableCell>
                     <TableCell>{reservation.service}</TableCell>
                     <TableCell>{reservation.message}</TableCell>
                     <TableCell>
@@ -184,6 +193,7 @@ export default function Dashboard() {
                         {reservation.status}
                       </Badge>
                     </TableCell>
+                    <TableCell>{reservation.phone}</TableCell>
                     <TableCell>
                       <Button
                         variant="destructive"

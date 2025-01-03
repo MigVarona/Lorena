@@ -12,19 +12,19 @@ La primavera está a la vuelta de la esquina y, con ella, la oportunidad de reno
 
 ### Cortes de flequillo que más realizo esta primavera en Lorena Varona
 
-- **Flequillo cortina**  
+**Flequillo cortina**  
   Un clásico que sigue en boga, ideal para quienes buscan un look desenfadado y femenino. Se caracteriza por su longitud y apertura, permitiendo peinarlo de lado o al centro.
 
-- **Flequillo Bardot:**  
+**Flequillo Bardot:**  
   Inspirado en el icónico look de Brigitte Bardot, este flequillo es corto y tupido, peinándose hacia delante con un ligero volumen. Perfecto para rostros ovalados y cuadrados.
 
-- **Flequillo baby bang:**  
+**Flequillo baby bang:**  
   Muy corto, por encima de las cejas, aporta un toque atrevido y juvenil al look. Se recomienda para rostros alargados y triangulares.
 
-- **Flequillo despuntado:**  
+**Flequillo despuntado:**  
   Similar al flequillo cortina, pero con las puntas ligeramente desfiladas. Aporta textura y movimiento al cabello, siendo ideal para rostros redondos y cuadrados.
 
-- **Flequillo largo y abierto:**  
+**Flequillo largo y abierto:**  
   Se caracteriza por su longitud y apertura, llegando hasta la barbilla. Se puede peinar de lado o al centro, y es ideal para rostros ovalados y alargados.
 
 ---
@@ -45,19 +45,19 @@ La primavera está a la vuelta de la esquina y, con ella, la oportunidad de reno
 
 #### Según tu estilo personal
 
-- ¿Prefieres un look clásico o uno atrevido?
+¿Prefieres un look clásico o uno atrevido?
 
 ---
 
 ### Recomendaciones
 
-- **Pide una cita con tu estilista:**  
+**Pide una cita con tu estilista:**  
   Un profesional te ayudará a elegir el flequillo adecuado para tu rostro y tipo de cabello.  
 
-- **Cuida tu flequillo:**  
+**Cuida tu flequillo:**  
   Lava y peina el cabello con regularidad para mantenerlo en buen estado.  
 
-- **Sé paciente:**  
+**Sé paciente:**  
   Puede que te lleve un tiempo acostumbrarte a tu nuevo flequillo.  
 
 ---

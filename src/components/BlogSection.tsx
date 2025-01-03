@@ -2,19 +2,19 @@ const blogPosts = [
     {
       title: "Tendencias de Color 2024",
       excerpt: "Descubre los tonos que marcarán tendencia esta temporada...",
-      image: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388",
+      image: "/Cortes-de-flequillo-que-seran-tendencia-en-la-primavera-2024.jpg",
       date: "15 Mar 2024",
     },
     {
       title: "Cuidados para el Cabello en Verano",
       excerpt: "Tips esenciales para mantener tu cabello saludable...",
-      image: "https://images.unsplash.com/photo-1519699047748-de8e457a634e",
+      image: "/Tratamientos-esenciales-en-otono-para-tener-una-cabello-radiante.jpg",
       date: "10 Mar 2024",
     },
     {
       title: "Peinados para Eventos Especiales",
       excerpt: "Ideas elegantes para lucir espectacular en cualquier ocasión...",
-      image: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11",
+      image: "/Cabello-seco-o-dañado.jpg",
       date: "5 Mar 2024",
     },
   ];

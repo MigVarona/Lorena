@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 const images = [
   {
-    url: "/photo-1582095133179-bfd08e2fc6b3.jpg",
+    url: "/Cortes-de-flequillo-que-seran-tendencia-en-la-primavera-2024.jpg",
     title: "Corte y Peinado",
-    link: "/some-link-1",  // You can replace with actual URLs
+    link: "/Cortes-de-flequillo-que-seran-tendencia-en-la-primavera-2024",  // You can replace with actual URLs
   },
   {
     url: "/photo-1522337660859-02fbefca4702.jpg",

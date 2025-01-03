@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import Link from "next/link";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,8 +14,9 @@ export default function Navbar() {
   return (
     <nav className="bg-black text-white p-4 shadow-md fixed w-full z-50">
       <div className="flex justify-between items-center max-w-6xl mx-auto">
+        <Link href="/" passHref>
         <h1 className="text-2xl font-bold">Lorena Varona</h1>
-
+        </Link>
         {/* Hamburger menu button for mobile */}
         <button
           onClick={toggleMenu}
@@ -31,24 +33,24 @@ export default function Navbar() {
         {/* Desktop menu */}
         <ul className="hidden md:flex gap-6">
           <li>
-            <a href="/" className="text-white transition-colors">
+            <Link href="/" className="text-white transition-colors">
               Inicio
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/#galeria" className="transition-colors">
+            <Link href="/#galeria" className="transition-colors">
               Galería
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/#reserva" className="transition-colors">
+            <Link href="/#reserva" className="transition-colors">
               Reserva
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/blog" className="transition-colors">
+            <Link href="/blog" className="transition-colors">
               Blog
-            </a>
+            </Link>
           </li>
         </ul>
 
@@ -57,40 +59,40 @@ export default function Navbar() {
           <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden z-50">
             <ul className="flex flex-col py-2">
               <li>
-                <a
+                <Link
                   href="/inicio"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
                   Inicio
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/#galeria"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
                   Galería
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/#reserva"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
                   Reserva
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="/blog"
                   className="block px-4 py-2 text-black hover:bg-gray-700 transition-colors"
                   onClick={toggleMenu}
                 >
                   Blog
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
