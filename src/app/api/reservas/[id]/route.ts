@@ -1,4 +1,5 @@
 import { supabase } from "../../../../lib/supabaseClient";
+import { NextResponse } from "next/server";
 
 // Crear una nueva reserva
 export async function POST(req: Request) {
@@ -58,41 +59,47 @@ export async function GET() {
   }
 }
 
-// Actualizar fecha y hora de una reserva existente
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
+  // Aseguramos que `params` se espere correctamente
+  const { id } = await context.params;
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Falta el ID de la reserva" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const body = await req.json();
+    const body = await request.json();
     const { date, time } = body;
 
-    // Obtener `params` de manera asincrónica
-    const params = await context.params;
-
-    if (!date || !time || !params?.id) {
-      return new Response(
-        JSON.stringify({ error: "ID de reserva o datos faltantes" }),
+    if (!date || !time) {
+      return NextResponse.json(
+        { error: "Faltan datos obligatorios" },
         { status: 400 }
       );
     }
 
-    // Actualizar en la base de datos usando el ID de la reserva
+    // Ejemplo: Actualización en la base de datos
     const { data, error } = await supabase
       .from("reservas")
       .update({ date, time })
-      .eq("id", params.id); // Usamos el ID en los parámetros
+      .eq("id", id);
 
     if (error) {
-      console.error("Error al actualizar en Supabase:", error.message);
-      return new Response(
-        JSON.stringify({ error: "Error al actualizar la reserva" }),
+      console.error("Error al actualizar la reserva:", error.message);
+      return NextResponse.json(
+        { error: "Error al actualizar la reserva" },
         { status: 500 }
       );
     }
 
-    return new Response(JSON.stringify({ data }), { status: 200 });
+    return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error al procesar la solicitud:", error);
-    return new Response(
-      JSON.stringify({ error: "Error al procesar la actualización" }),
+    console.error("Error en el servidor:", error);
+    return NextResponse.json(
+      { error: "Error en el servidor" },
       { status: 500 }
     );
   }
