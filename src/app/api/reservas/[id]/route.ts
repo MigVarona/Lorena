@@ -60,9 +60,8 @@ export async function GET() {
 }
 
 // PUT: Actualizar reserva
-export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
-  // Aseguramos que `params` se espere correctamente
-  const { id } = await context.params;
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
+  const { id } = params;  // Sin necesidad de await, ya que params es sincrónico en Next.js 15.
 
   if (!id) {
     return NextResponse.json(
@@ -82,7 +81,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
       );
     }
 
-    // Ejemplo: Actualización en la base de datos
+    // Actualización en la base de datos
     const { data, error } = await supabase
       .from("reservas")
       .update({ date, time })
@@ -105,3 +104,4 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     );
   }
 }
+
