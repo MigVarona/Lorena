@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { EditReservationDialog } from "@/components/edit-reservation-dialog";
 
 interface Reservation {
-  _id: string;
+  id: string;
   name: string;
   email: string;
   date: string;
@@ -95,7 +95,7 @@ export default function Dashboard() {
 
   const confirmDelete = () => {
     if (deleteId) {
-      setReservations(reservations.filter((r) => r._id !== deleteId));
+      setReservations(reservations.filter((r) => r.id !== deleteId));
       setDeleteId(null);
     }
   };
@@ -157,7 +157,7 @@ export default function Dashboard() {
             <TableBody>
               {paginatedReservations.map((reservation, index) => {
                 const key =
-                  reservation._id ||
+                  reservation.id ||
                   `${reservation.name}-${reservation.date}-${index}`;
                 return (
                   <TableRow key={key}>
@@ -193,7 +193,7 @@ export default function Dashboard() {
       {/* Mostrar el modal para editar la reserva */}
       {editReservation && (
         <EditReservationDialog
-          reservation={editReservation} // Asegúrate de que editReservation tiene el id
+          reservation={{ id: editReservation.id, date: editReservation.date, time: editReservation.time }} // Asegúrate de que editReservation tiene el id
           onClose={() => setEditReservation(null)}
           onSave={(id, date, time) => updateReservation(id, date, time)} // Pasamos el id al updateReservation
         />
