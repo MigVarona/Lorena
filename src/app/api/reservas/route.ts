@@ -1,5 +1,4 @@
 import { supabase } from "../../../lib/supabaseClient";
-import { NextResponse } from "next/server";
 
 // Crear una nueva reserva
 export async function POST(req: Request) {
