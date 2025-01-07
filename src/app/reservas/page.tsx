@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState, useEffect, useMemo } from "react";
 import { FaTrashAlt, FaSort, FaEdit } from "react-icons/fa";
@@ -35,7 +35,9 @@ export default function Dashboard() {
   const [sortColumn, setSortColumn] = useState<keyof Reservation>("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [editReservation, setEditReservation] = useState<Reservation | null>(null);
+  const [editReservation, setEditReservation] = useState<Reservation | null>(
+    null
+  );
 
   const itemsPerPage = 10;
 
@@ -63,8 +65,10 @@ export default function Dashboard() {
 
   const sortedReservations = useMemo(() => {
     return [...filteredReservations].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1;
-      if (a[sortColumn] > b[sortColumn]) return sortDirection === "asc" ? 1 : -1;
+      if (a[sortColumn] < b[sortColumn])
+        return sortDirection === "asc" ? -1 : 1;
+      if (a[sortColumn] > b[sortColumn])
+        return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredReservations, sortColumn, sortDirection]);
@@ -168,10 +172,17 @@ export default function Dashboard() {
                     <TableCell>{reservation.service}</TableCell>
                     <TableCell>{reservation.message}</TableCell>
                     <TableCell>
-                    <Badge variant={reservation.status === "pendiente" ? "warning" : reservation.status === "confirmada" ? "success" : "destructive"}>
-  {reservation.status}
-</Badge>
-
+                      <Badge
+                        variant={
+                          reservation.status === "pendiente"
+                            ? "warning"
+                            : reservation.status === "confirmada"
+                            ? "success"
+                            : "destructive"
+                        }
+                      >
+                        {reservation.status}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <Button
@@ -196,10 +207,14 @@ export default function Dashboard() {
         onClose={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
-      
+
       {editReservation && (
         <EditReservationDialog
-          reservation={{ id: editReservation.id, date: editReservation.date, time: editReservation.time }}
+          reservation={{
+            id: editReservation.id,
+            date: editReservation.date,
+            time: editReservation.time,
+          }}
           onClose={() => setEditReservation(null)}
           onSave={(id, date, time) => updateReservation(id, date, time)}
         />

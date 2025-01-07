@@ -11,6 +11,8 @@ import PricingSection from "../components/PricingSection";
 import SobreMi from "../components/SobreMi";
 import InstagramGallery from "../components/InstagramGallery";
 import Navbar from "@/components/Navbar";
+import { FaWhatsapp } from "react-icons/fa"; // Importa el ícono de WhatsApp
+
 
 // Mantén los cambios sugeridos en tu código actual
 
@@ -66,6 +68,15 @@ export default function Home() {
       <InstagramGallery />
 
       <Footer />
+      <a
+        href="https://wa.me/34685898088" // Reemplaza con tu número de WhatsApp
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-8 right-8 p-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition"
+        style={{ zIndex: 9999 }} // Asegura que el ícono se muestre encima de otros elementos
+      >
+        <FaWhatsapp size={32} />
+      </a>
     </div>
   );
 }
