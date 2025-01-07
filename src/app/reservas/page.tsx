@@ -168,9 +168,10 @@ export default function Dashboard() {
                     <TableCell>{reservation.service}</TableCell>
                     <TableCell>{reservation.message}</TableCell>
                     <TableCell>
-                      <Badge variant={reservation.status === "pendiente" ? "warning" : reservation.status === "confirmada" ? "success" : "destructive"}>
-                        {reservation.status}
-                      </Badge>
+                    <Badge variant={reservation.status === "pendiente" ? "warning" : reservation.status === "confirmada" ? "success" : "destructive"}>
+  {reservation.status}
+</Badge>
+
                     </TableCell>
                     <TableCell>
                       <Button
