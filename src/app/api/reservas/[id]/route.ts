@@ -60,11 +60,9 @@ export async function GET() {
 }
 
 // PUT: Actualizar reserva
-export async function PUT(
-  request: Request,
-  context: { params: { id: string } }
-) {
-  const { id } = context.params; // Usamos los params del contexto directamente.
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
+  // Aseguramos que `params` se espere correctamente
+  const { id } = await context.params;
 
   if (!id) {
     return NextResponse.json(
@@ -84,7 +82,7 @@ export async function PUT(
       );
     }
 
-    // Actualizar en la base de datos
+    // Ejemplo: Actualización en la base de datos
     const { data, error } = await supabase
       .from("reservas")
       .update({ date, time })
