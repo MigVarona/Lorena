@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
 import { useState, useEffect, useMemo } from "react";
-import { FaTrashAlt, FaSort } from "react-icons/fa";
+import { FaTrashAlt, FaSort, FaEdit } from "react-icons/fa";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
+import { EditReservationDialog } from "@/components/edit-reservation-dialog";
 
 interface Reservation {
   _id: string;
@@ -43,22 +35,25 @@ export default function Dashboard() {
   const [sortColumn, setSortColumn] = useState<keyof Reservation>("date");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [editReservation, setEditReservation] = useState<Reservation | null>(null);
 
   const itemsPerPage = 10;
 
-  // Obtener reservas desde la API
+  // Reutilizamos la función para obtener reservas
+  const fetchReservations = async () => {
+    try {
+      const response = await fetch("/api/reservas");
+      const { data } = await response.json();
+      setReservations(data || []);
+    } catch (error) {
+      console.error("Error al obtener reservas:", error);
+    }
+  };
+
+  // Llamamos a esta función en el `useEffect` inicial
   useEffect(() => {
-    const fetchReservations = async () => {
-      try {
-        const response = await fetch("/api/reservas");
-        const { data } = await response.json();
-        setReservations(data || []);
-      } catch (error) {
-        console.error("Error al obtener reservas:", error);
-      }
-    };
     fetchReservations();
-  }, []); // Solo se ejecuta al montar el componente
+  }, []);
 
   const filteredReservations = useMemo(() => {
     return reservations.filter((reservation) =>
@@ -105,10 +100,28 @@ export default function Dashboard() {
     }
   };
 
-  const statusColors = {
-    pendiente: "bg-yellow-200 text-yellow-800",
-    confirmada: "bg-green-200 text-green-800",
-    cancelada: "bg-red-200 text-red-800",
+  const handleEdit = (reservation: Reservation) => {
+    setEditReservation(reservation);
+  };
+
+  const updateReservation = async (id: string, date: string, time: string) => {
+    try {
+      const response = await fetch(`/api/reservas/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, time }),
+      });
+      const result = await response.json();
+
+      if (response.ok) {
+        // Después de actualizar, volvemos a obtener las reservas
+        fetchReservations();
+      } else {
+        console.error("Error al actualizar la reserva:", result.error);
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+    }
   };
 
   return (
@@ -134,45 +147,11 @@ export default function Dashboard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("name")}
-                >
-                  Nombre <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("email")}
-                >
-                  Correo <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("date")}
-                >
-                  Fecha <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("time")}
-                >
-                  Hora <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("service")}
-                >
-                  Servicio <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead>Comentarios</TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("status")}
-                >
-                  Estado <FaSort className="inline ml-1" />
-                </TableHead>
-                <TableHead>Teléfono</TableHead>
-                <TableHead>Acciones</TableHead>
+                <TableCell>Nombre</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Hora</TableCell>
+                <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -186,22 +165,14 @@ export default function Dashboard() {
                     <TableCell>{reservation.email}</TableCell>
                     <TableCell>{reservation.date}</TableCell>
                     <TableCell>{reservation.time}</TableCell>
-                    <TableCell>{reservation.service}</TableCell>
-                    <TableCell>{reservation.message}</TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[reservation.status]}>
-                        {reservation.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{reservation.phone}</TableCell>
                     <TableCell>
                       <Button
-                        variant="destructive"
+                        variant="secondary"
                         size="sm"
-                        onClick={() => handleDelete(reservation._id)}
+                        onClick={() => handleEdit(reservation)}
                       >
-                        <FaTrashAlt className="mr-2 h-4 w-4" />
-                        Eliminar
+                        <FaEdit className="mr-2 h-4 w-4" />
+                        Editar
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -212,47 +183,21 @@ export default function Dashboard() {
         </div>
       )}
 
-      <Pagination className="mt-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              className={`cursor-pointer ${
-                currentPage === 1 ? "cursor-not-allowed opacity-50" : ""
-              }`}
-            />
-          </PaginationItem>
-          {[...Array(totalPages)].map((_, i) => (
-            <PaginationItem key={i}>
-              <PaginationLink
-                onClick={() => setCurrentPage(i + 1)}
-                isActive={currentPage === i + 1}
-                className={currentPage === i + 1 ? "text-blue-600" : ""}
-              >
-                {i + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              className={`cursor-pointer ${
-                currentPage === totalPages
-                  ? "cursor-not-allowed opacity-50"
-                  : ""
-              }`}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-
+      {/* Modales */}
       <DeleteConfirmationDialog
         isOpen={deleteId !== null}
         onClose={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
+      
+      {/* Mostrar el modal para editar la reserva */}
+      {editReservation && (
+        <EditReservationDialog
+          reservation={editReservation} // Asegúrate de que editReservation tiene el id
+          onClose={() => setEditReservation(null)}
+          onSave={(id, date, time) => updateReservation(id, date, time)} // Pasamos el id al updateReservation
+        />
+      )}
     </div>
   );
 }
