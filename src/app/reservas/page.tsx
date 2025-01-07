@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { FaTrashAlt, FaSort, FaEdit } from "react-icons/fa";
+import { FaTrashAlt, FaSort, FaEdit, FaSearch } from "react-icons/fa";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { EditReservationDialog } from "@/components/edit-reservation-dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Reservation {
   id: string;
@@ -38,6 +46,7 @@ export default function Dashboard() {
   const [editReservation, setEditReservation] = useState<Reservation | null>(
     null
   );
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const itemsPerPage = 10;
 
@@ -58,17 +67,22 @@ export default function Dashboard() {
   const filteredReservations = useMemo(() => {
     return reservations.filter((reservation) =>
       Object.values(reservation).some((value) =>
-        value.toString().toLowerCase().includes(search.toLowerCase())
+        value?.toString().toLowerCase().includes(search.toLowerCase())
       )
+    ).filter((reservation) => 
+      statusFilter === "all" ? true : reservation.status === statusFilter
     );
-  }, [reservations, search]);
+  }, [reservations, search, statusFilter]);
 
   const sortedReservations = useMemo(() => {
     return [...filteredReservations].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn])
-        return sortDirection === "asc" ? -1 : 1;
-      if (a[sortColumn] > b[sortColumn])
-        return sortDirection === "asc" ? 1 : -1;
+      const aValue = a[sortColumn];
+      const bValue = b[sortColumn];
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return sortDirection === "asc" ? -1 : 1;
+      if (bValue == null) return sortDirection === "asc" ? 1 : -1;
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredReservations, sortColumn, sortDirection]);
@@ -124,83 +138,135 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="font-sans text-black p-8">
-      <h1 className="text-3xl font-semibold mb-6 text-center">
-        Dashboard de Reservas
-      </h1>
+    <div className="font-sans text-black p-8 bg-gray-100 min-h-screen">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-3xl font-semibold text-center">
+            Dashboard de Reservas
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+            <div className="relative w-full md:w-1/2">
+              <Input
+                type="text"
+                placeholder="Buscar reservas..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+              />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-[180px]">
+                <SelectValue placeholder="Filtrar por estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="pendiente">Pendiente</SelectItem>
+                <SelectItem value="confirmada">Confirmada</SelectItem>
+                <SelectItem value="cancelada">Cancelada</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-      <div className="mb-4">
-        <Input
-          type="text"
-          placeholder="Buscar reservas..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm"
-        />
-      </div>
-
-      {paginatedReservations.length === 0 ? (
-        <div className="text-center py-4">No se encontraron reservas.</div>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Hora</TableCell>
-                <TableCell>Teléfono</TableCell>
-                <TableCell>Servicio</TableCell>
-                <TableCell>Mensaje</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {paginatedReservations.map((reservation, index) => {
-                const key =
-                  reservation.id ||
-                  `${reservation.name}-${reservation.date}-${index}`;
-                return (
-                  <TableRow key={key}>
-                    <TableCell>{reservation.name}</TableCell>
-                    <TableCell>{reservation.email}</TableCell>
-                    <TableCell>{reservation.date}</TableCell>
-                    <TableCell>{reservation.time}</TableCell>
-                    <TableCell>{reservation.phone}</TableCell>
-                    <TableCell>{reservation.service}</TableCell>
-                    <TableCell>{reservation.message}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          reservation.status === "pendiente"
-                            ? "warning"
-                            : reservation.status === "confirmada"
-                            ? "success"
-                            : "destructive"
-                        }
-                      >
-                        {reservation.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleEdit(reservation)}
-                      >
-                        <FaEdit className="mr-2 h-4 w-4" />
-                        Editar
-                      </Button>
-                    </TableCell>
+          {paginatedReservations.length === 0 ? (
+            <div className="text-center py-4">No se encontraron reservas.</div>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border bg-white">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
+                      Nombre {sortColumn === "name" && <FaSort className="inline ml-1" />}
+                    </TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort("email")}>
+                      Email {sortColumn === "email" && <FaSort className="inline ml-1" />}
+                    </TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort("date")}>
+                      Fecha {sortColumn === "date" && <FaSort className="inline ml-1" />}
+                    </TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort("time")}>
+                      Hora {sortColumn === "time" && <FaSort className="inline ml-1" />}
+                    </TableHead>
+                    <TableHead>Teléfono</TableHead>
+                    <TableHead>Servicio</TableHead>
+                    <TableHead>Mensaje</TableHead>
+                    <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
+                      Estado {sortColumn === "status" && <FaSort className="inline ml-1" />}
+                    </TableHead>
+                    <TableHead>Acciones</TableHead>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+                </TableHeader>
+                <TableBody>
+                  {paginatedReservations.map((reservation, index) => {
+                    if (!reservation) return null; // Skip rendering if reservation is null
+                    const key =
+                      reservation.id ||
+                      `${reservation.name}-${reservation.date}-${index}`;
+                    return (
+                      <TableRow key={key}>
+                        <TableCell>{reservation.name || 'N/A'}</TableCell>
+                        <TableCell>{reservation.email || 'N/A'}</TableCell>
+                        <TableCell>{reservation.date || 'N/A'}</TableCell>
+                        <TableCell>{reservation.time || 'N/A'}</TableCell>
+                        <TableCell>{reservation.phone || 'N/A'}</TableCell>
+                        <TableCell>{reservation.service || 'N/A'}</TableCell>
+                        <TableCell>{reservation.message || 'N/A'}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              reservation.status === "pendiente"
+                                ? "warning"
+                                : reservation.status === "confirmada"
+                                ? "success"
+                                : "destructive"
+                            }
+                          >
+                            {reservation.status || 'N/A'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleEdit(reservation)}
+                          >
+                            <FaEdit className="mr-2 h-4 w-4" />
+                            Editar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="mr-2"
+        >
+          Anterior
+        </Button>
+        <span className="mx-4 self-center">
+          Página {currentPage} de {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="ml-2"
+        >
+          Siguiente
+        </Button>
+      </div>
 
       <DeleteConfirmationDialog
         isOpen={deleteId !== null}
@@ -222,3 +288,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
