@@ -39,7 +39,6 @@ export default function Dashboard() {
 
   const itemsPerPage = 10;
 
-  // Reutilizamos la función para obtener reservas
   const fetchReservations = async () => {
     try {
       const response = await fetch("/api/reservas");
@@ -50,7 +49,6 @@ export default function Dashboard() {
     }
   };
 
-  // Llamamos a esta función en el `useEffect` inicial
   useEffect(() => {
     fetchReservations();
   }, []);
@@ -65,10 +63,8 @@ export default function Dashboard() {
 
   const sortedReservations = useMemo(() => {
     return [...filteredReservations].sort((a, b) => {
-      if (a[sortColumn] < b[sortColumn])
-        return sortDirection === "asc" ? -1 : 1;
-      if (a[sortColumn] > b[sortColumn])
-        return sortDirection === "asc" ? 1 : -1;
+      if (a[sortColumn] < b[sortColumn]) return sortDirection === "asc" ? -1 : 1;
+      if (a[sortColumn] > b[sortColumn]) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
   }, [filteredReservations, sortColumn, sortDirection]);
@@ -114,7 +110,6 @@ export default function Dashboard() {
       const result = await response.json();
 
       if (response.ok) {
-        // Después de actualizar, volvemos a obtener las reservas
         fetchReservations();
       } else {
         console.error("Error al actualizar la reserva:", result.error);
@@ -151,6 +146,10 @@ export default function Dashboard() {
                 <TableCell>Email</TableCell>
                 <TableCell>Fecha</TableCell>
                 <TableCell>Hora</TableCell>
+                <TableCell>Teléfono</TableCell>
+                <TableCell>Servicio</TableCell>
+                <TableCell>Mensaje</TableCell>
+                <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableRow>
             </TableHeader>
@@ -165,6 +164,14 @@ export default function Dashboard() {
                     <TableCell>{reservation.email}</TableCell>
                     <TableCell>{reservation.date}</TableCell>
                     <TableCell>{reservation.time}</TableCell>
+                    <TableCell>{reservation.phone}</TableCell>
+                    <TableCell>{reservation.service}</TableCell>
+                    <TableCell>{reservation.message}</TableCell>
+                    <TableCell>
+                      <Badge variant={reservation.status === "pendiente" ? "warning" : reservation.status === "confirmada" ? "success" : "destructive"}>
+                        {reservation.status}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <Button
                         variant="secondary"
@@ -183,19 +190,17 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modales */}
       <DeleteConfirmationDialog
         isOpen={deleteId !== null}
         onClose={() => setDeleteId(null)}
         onConfirm={confirmDelete}
       />
       
-      {/* Mostrar el modal para editar la reserva */}
       {editReservation && (
         <EditReservationDialog
-          reservation={{ id: editReservation.id, date: editReservation.date, time: editReservation.time }} // Asegúrate de que editReservation tiene el id
+          reservation={{ id: editReservation.id, date: editReservation.date, time: editReservation.time }}
           onClose={() => setEditReservation(null)}
-          onSave={(id, date, time) => updateReservation(id, date, time)} // Pasamos el id al updateReservation
+          onSave={(id, date, time) => updateReservation(id, date, time)}
         />
       )}
     </div>
