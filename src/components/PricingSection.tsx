@@ -7,14 +7,14 @@ const servicios = [
     descripcion: 'Lavado con champú y crema, masaje capilar, peinado y producto de acabado.',
   },
   {
-    nombre: 'Corte, lavado y peinado',
-    precio: 'desde 59€',
+    nombre: 'Corte',
+    precio: 'desde 39€',
     descripcion: 'Lavado con champú y crema, masaje capilar, peinado y producto de acabado.',
   },
   {
     nombre: 'Tinte raíz y Lavado',
     precio: 'desde 51€',
-    descripcion: 'Tinte, lavado, masaje capilar y secado. No incluye ni matiz ni peinado.',
+    descripcion: 'Tinte, lavado, masaje capilar. No incluye ni matiz ni peinado.',
   },
   {
     nombre: 'Mechas balayage y lavado',
@@ -22,14 +22,14 @@ const servicios = [
     descripcion: 'Tinte, lavado, masaje capilar y secado. No incluye ni matiz ni peinado.',
   },
   {
-    nombre: 'Alisado Keratina',
-    precio: 'desde 152€',
-    descripcion: 'Tratamiento de alisado con keratina.',
+    nombre: 'Maquillaje',
+    precio: 'desde 52€',
+    descripcion: 'Día y noche.',
   },
   {
-    nombre: 'Alisado Keratin',
-    precio: 'desde 152€',
-    descripcion: 'Tratamiento de alisado con keratina.',
+    nombre: 'Corte caballero',
+    precio: 'desde 27€',
+    descripcion: 'Lavado, producto acabado.',
   },
 ]
 

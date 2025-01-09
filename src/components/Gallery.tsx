@@ -18,7 +18,7 @@ const images = [
     link: "/some-link-3",
   },
   {
-    url: "/photo-1562322140-8baeececf3df.jpg",
+    url: "/lorena varona peinado novia.jpg",
     title: "Peinados de Novia",
     link: "/some-link-4",
   },
