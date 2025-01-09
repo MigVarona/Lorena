@@ -13,7 +13,6 @@ import InstagramGallery from "../components/InstagramGallery";
 import Navbar from "@/components/Navbar";
 import { FaWhatsapp } from "react-icons/fa"; // Importa el ícono de WhatsApp
 
-
 // Mantén los cambios sugeridos en tu código actual
 
 export default function Home() {

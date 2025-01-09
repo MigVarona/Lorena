@@ -26,6 +26,11 @@ const servicios = [
     precio: 'desde 152€',
     descripcion: 'Tratamiento de alisado con keratina.',
   },
+  {
+    nombre: 'Alisado Keratin',
+    precio: 'desde 152€',
+    descripcion: 'Tratamiento de alisado con keratina.',
+  },
 ]
 
 export default function PricingSection() {
