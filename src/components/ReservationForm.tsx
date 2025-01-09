@@ -36,9 +36,12 @@ const ReservationForm = () => {
   const { register, handleSubmit, setValue } = useForm<IFormInput>();
 
   const services = [
-    { name: "Corte de Cabello", price: "€25" },
-    { name: "Color de Cabello", price: "€40" },
-    { name: "Tratamientos Capilares", price: "€30" },
+    { name: "Lavado y Peinado" },
+    { name: "Color de mujer" },
+    { name: "Tinte raíz y Lavado" },
+    { name: "Mechas balayage y lavado" },
+    { name: "Maquillaje" },
+    { name: "Corte caballero" },
   ];
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
@@ -129,7 +132,7 @@ const ReservationForm = () => {
                     <SelectContent>
                       {services.map((service) => (
                         <SelectItem key={service.name} value={service.name}>
-                          {service.name} - {service.price}
+                          {service.name}
                         </SelectItem>
                       ))}
                     </SelectContent>

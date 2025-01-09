@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Search, ArrowUpDown, Edit } from "lucide-react";
+import { FaTrashAlt, FaSort, FaEdit, FaSearch, FaPlus, FaCalendarAlt } from "react-icons/fa";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/Calendar";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface Reservation {
   id: string;
@@ -36,6 +40,11 @@ interface Reservation {
   status: "pendiente" | "confirmada" | "cancelada";
 }
 
+interface BlockedDate {
+  id: string;
+  date: string;
+}
+
 export default function Dashboard() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [search, setSearch] = useState("");
@@ -47,8 +56,69 @@ export default function Dashboard() {
     null
   );
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
+  const [newBlockedDate, setNewBlockedDate] = useState("");
+  const [isAddingDate, setIsAddingDate] = useState(false);
 
   const itemsPerPage = 10;
+
+  const fetchBlockedDates = async () => {
+    try {
+      const response = await fetch("/api/blocked-dates");
+      const { data } = await response.json();
+      setBlockedDates(data);
+    } catch (error) {
+      console.error("Error al obtener fechas bloqueadas:", error);
+    }
+  };
+
+  const addBlockedDate = async (date: Date | undefined) => {
+    if (!date) return;
+
+    const formattedDate = format(date, "yyyy-MM-dd");
+
+    try {
+      const response = await fetch("/api/blocked-dates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: formattedDate }),
+      });
+
+      if (response.ok) {
+        await fetchBlockedDates();
+        setIsAddingDate(false);
+      } else {
+        const { error } = await response.json();
+        console.error("Error al bloquear la fecha:", error);
+      }
+    } catch (error) {
+      console.error("Error al bloquear la fecha:", error);
+    }
+  };
+
+  const removeBlockedDate = async (date: string) => {
+    try {
+      const response = await fetch("/api/blocked-dates", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date }),
+      });
+
+      if (response.ok) {
+        await fetchBlockedDates();
+      } else {
+        const { error } = await response.json();
+        console.error("Error al desbloquear la fecha:", error);
+      }
+    } catch (error) {
+      console.error("Error al desbloquear la fecha:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlockedDates();
+    fetchReservations();
+  }, []);
 
   const fetchReservations = async () => {
     try {
@@ -60,18 +130,16 @@ export default function Dashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchReservations();
-  }, []);
-
   const filteredReservations = useMemo(() => {
-    return reservations.filter((reservation) =>
-      Object.values(reservation).some((value) =>
-        value?.toString().toLowerCase().includes(search.toLowerCase())
+    return reservations
+      .filter((reservation) =>
+        Object.values(reservation).some((value) =>
+          value?.toString().toLowerCase().includes(search.toLowerCase())
+        )
       )
-    ).filter((reservation) => 
-      statusFilter === "all" ? true : reservation.status === statusFilter
-    );
+      .filter((reservation) =>
+        statusFilter === "all" ? true : reservation.status === statusFilter
+      );
   }, [reservations, search, statusFilter]);
 
   const sortedReservations = useMemo(() => {
@@ -138,45 +206,56 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 md:p-8 animate-fade-in">
-      <Card className="mb-8 shadow-lg border-0">
-        <CardHeader className="space-y-1 bg-white rounded-t-xl border-b border-gray-100">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent text-center">
+    <div className="font-sans text-black p-8 bg-gray-100 min-h-screen">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-3xl font-semibold text-center">
             Dashboard de Reservas
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <p className="text-sm font-medium text-muted-foreground">Total Reservas</p>
-                <p className="text-2xl font-bold">{reservations.length}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <p className="text-sm font-medium text-muted-foreground">Pendientes</p>
-                <p className="text-2xl font-bold text-yellow-600">
-                  {reservations.filter(r => r.status === "pendiente").length}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <p className="text-sm font-medium text-muted-foreground">Confirmadas</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {reservations.filter(r => r.status === "confirmada").length}
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <p className="text-sm font-medium text-muted-foreground">Canceladas</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {reservations.filter(r => r.status === "cancelada").length}
-                </p>
-              </CardContent>
-            </Card>
+        <CardContent>
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">Fechas Bloqueadas</h2>
+              <Popover open={isAddingDate} onOpenChange={setIsAddingDate}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <FaPlus className="mr-2" /> Agregar Fecha Bloqueada
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <Calendar
+                    selected={newBlockedDate ? [new Date(newBlockedDate)] : []}
+                    onSelect={(date) => {
+                      addBlockedDate(date);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {blockedDates.map((blockedDate) => (
+                <div
+                  key={blockedDate.id}
+                  className="flex items-center justify-between bg-white p-3 rounded-md shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="text-gray-400 mr-2" />
+                    <span className="font-medium">
+                      {format(new Date(blockedDate.date), "d MMM yyyy", { locale: es })}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeBlockedDate(blockedDate.date)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                  >
+                    <FaTrashAlt />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
@@ -186,12 +265,12 @@ export default function Dashboard() {
                 placeholder="Buscar reservas..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 bg-white border-gray-200 focus:border-purple-500 transition-colors"
+                className="pl-10"
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[180px] bg-white border-gray-200">
+              <SelectTrigger className="w-full md:w-[180px]">
                 <SelectValue placeholder="Filtrar por estado" />
               </SelectTrigger>
               <SelectContent>
@@ -204,76 +283,98 @@ export default function Dashboard() {
           </div>
 
           {paginatedReservations.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              No se encontraron reservas.
-            </div>
+            <div className="text-center py-4">No se encontraron reservas.</div>
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-lg border bg-white">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-gray-50 hover:bg-gray-50">
-                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("name")}>
-                      Nombre {sortColumn === "name" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
+                  <TableRow>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("name")}
+                    >
+                      Nombre{" "}
+                      {sortColumn === "name" && (
+                        <FaSort className="inline ml-1" />
+                      )}
                     </TableHead>
-                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("email")}>
-                      Email {sortColumn === "email" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("email")}
+                    >
+                      Email{" "}
+                      {sortColumn === "email" && (
+                        <FaSort className="inline ml-1" />
+                      )}
                     </TableHead>
-                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("date")}>
-                      Fecha {sortColumn === "date" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("date")}
+                    >
+                      Fecha{" "}
+                      {sortColumn === "date" && (
+                        <FaSort className="inline ml-1" />
+                      )}
                     </TableHead>
-                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("time")}>
-                      Hora {sortColumn === "time" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("time")}
+                    >
+                      Hora{" "}
+                      {sortColumn === "time" && (
+                        <FaSort className="inline ml-1" />
+                      )}
                     </TableHead>
-                    <TableHead className="font-semibold">Teléfono</TableHead>
-                    <TableHead className="font-semibold">Servicio</TableHead>
-                    <TableHead className="font-semibold">Mensaje</TableHead>
-                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("status")}>
-                      Estado {sortColumn === "status" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
+                    <TableHead>Teléfono</TableHead>
+                    <TableHead>Servicio</TableHead>
+                    <TableHead>Mensaje</TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("status")}
+                    >
+                      Estado{" "}
+                      {sortColumn === "status" && (
+                        <FaSort className="inline ml-1" />
+                      )}
                     </TableHead>
-                    <TableHead className="font-semibold">Acciones</TableHead>
+                    <TableHead>Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedReservations.map((reservation, index) => {
                     if (!reservation) return null;
-                    const key = reservation.id || `${reservation.name}-${reservation.date}-${index}`;
+                    const key =
+                      reservation.id ||
+                      `${reservation.name}-${reservation.date}-${index}`;
                     return (
-                      <TableRow key={key} className="hover:bg-gray-50 transition-colors">
-                        <TableCell className="font-medium">{reservation.name || 'N/A'}</TableCell>
-                        <TableCell>{reservation.email || 'N/A'}</TableCell>
-                        <TableCell>{reservation.date || 'N/A'}</TableCell>
-                        <TableCell>{reservation.time || 'N/A'}</TableCell>
-                        <TableCell>{reservation.phone || 'N/A'}</TableCell>
-                        <TableCell>{reservation.service || 'N/A'}</TableCell>
-                        <TableCell>{reservation.message || 'N/A'}</TableCell>
+                      <TableRow key={key}>
+                        <TableCell>{reservation.name || "N/A"}</TableCell>
+                        <TableCell>{reservation.email || "N/A"}</TableCell>
+                        <TableCell>{reservation.date || "N/A"}</TableCell>
+                        <TableCell>{reservation.time || "N/A"}</TableCell>
+                        <TableCell>{reservation.phone || "N/A"}</TableCell>
+                        <TableCell>{reservation.service || "N/A"}</TableCell>
+                        <TableCell>{reservation.message || "N/A"}</TableCell>
                         <TableCell>
                           <Badge
                             variant={
                               reservation.status === "pendiente"
-                                ? "secondary"
+                                ? "warning"
                                 : reservation.status === "confirmada"
-                                ? "default"
+                                ? "success"
                                 : "destructive"
                             }
-                            className={
-                              reservation.status === "pendiente"
-                                ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                                : reservation.status === "confirmada"
-                                ? "bg-green-100 text-green-800 hover:bg-green-100"
-                                : "bg-red-100 text-red-800 hover:bg-red-100"
-                            }
                           >
-                            {reservation.status || 'N/A'}
+                            {reservation.status || "N/A"}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <Button
-                            variant="ghost"
+                            variant="secondary"
                             size="sm"
                             onClick={() => handleEdit(reservation)}
-                            className="hover:bg-purple-50 hover:text-purple-600"
                           >
-                            <Edit className="mr-2 h-4 w-4" />
+                            <FaEdit className="mr-2 h-4 w-4" />
                             Editar
                           </Button>
                         </TableCell>
@@ -284,30 +385,30 @@ export default function Dashboard() {
               </Table>
             </div>
           )}
-
-          <div className="flex justify-center items-center gap-4 mt-6">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="border-gray-200 hover:bg-gray-50 hover:text-gray-900"
-            >
-              Anterior
-            </Button>
-            <span className="text-sm text-gray-600">
-              Página {currentPage} de {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="border-gray-200 hover:bg-gray-50 hover:text-gray-900"
-            >
-              Siguiente
-            </Button>
-          </div>
         </CardContent>
       </Card>
+
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="mr-2"
+        >
+          Anterior
+        </Button>
+        <span className="mx-4 self-center">
+          Página {currentPage} de {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="ml-2"
+        >
+          Siguiente
+        </Button>
+      </div>
 
       <DeleteConfirmationDialog
         isOpen={deleteId !== null}
