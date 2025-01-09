@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -14,13 +14,17 @@ const Footer = () => {
           </div>
           <div>
             <h3 className="text-xl font-bold mb-4">Contacto</h3>
-            <p className="text-gray-400 mb-2">C/ Hermosilla 125, 28009 Madrid</p>
+            <p className="text-gray-400 mb-2">
+              C/ Hermosilla 125, 28009 Madrid
+            </p>
             <p className="text-gray-400 mb-2"> +34 685 898 088 / 919 201 973</p>
             <p className="text-gray-400"> info@lorenavarona.com</p>
           </div>
           <div>
             <h3 className="text-xl font-bold mb-4">Horario</h3>
-            <p className="text-gray-400 mb-2">Martes a Viernes: 10:30 - 19:30</p>
+            <p className="text-gray-400 mb-2">
+              Martes a Viernes: 10:30 - 19:30
+            </p>
             <p className="text-gray-400 mb-2">Sábados: 10:00 - 14:00</p>
             <p className="text-gray-400">Domingos-Lunes: Cerrado</p>
           </div>

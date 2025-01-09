@@ -13,20 +13,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
-  description: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
-  robots: "index, follow",  // Permite que los motores de búsqueda indexen el sitio y sigan los enlaces
-  keywords: "peluquería, Madrid, cortes de pelo, estilo, tendencia, peluquería exclusiva, Lorena Varona", // Agrega palabras clave relevantes para el SEO
+  title:
+    "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+  description:
+    "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+  robots: "index, follow", // Permite que los motores de búsqueda indexen el sitio y sigan los enlaces
+  keywords:
+    "peluquería, Madrid, cortes de pelo, estilo, tendencia, peluquería exclusiva, Lorena Varona", // Agrega palabras clave relevantes para el SEO
   openGraph: {
-    title: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
-    description: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+    title:
+      "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+    description:
+      "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
     url: "https://www.lorenavarona.com", // Cambia por la URL real de tu página
     type: "website", // El tipo de contenido
   },
   twitter: {
     card: "summary_large_image", // Tarjeta con imagen grande
-    title: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
-    description: "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+    title:
+      "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
+    description:
+      "Peluquería exclusiva en Madrid | Lorena Varona | Tendencia en tu pelo",
   },
 };
 
@@ -40,7 +47,9 @@ export default function RootLayout({
       <head>
         {/* Aquí puedes colocar cualquier otra etiqueta meta que necesites */}
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

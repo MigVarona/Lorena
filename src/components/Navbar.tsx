@@ -16,15 +16,13 @@ export default function Navbar() {
     <nav className="bg-black text-white p-4 shadow-md fixed w-full z-50">
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         <Link href="/" passHref>
-        
-            <Image
-              src="/Lorena Varona Logo.png"
-              alt="Lorena Varona"
-              width={70}
-              height={50}
-              className="custom-class"
-            />
-          
+          <Image
+            src="/Lorena Varona Logo.png"
+            alt="Lorena Varona"
+            width={70}
+            height={50}
+            className="custom-class"
+          />
         </Link>
         {/* Hamburger menu button for mobile */}
         <button

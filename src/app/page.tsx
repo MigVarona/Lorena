@@ -11,9 +11,7 @@ import PricingSection from "../components/PricingSection";
 import SobreMi from "../components/SobreMi";
 import InstagramGallery from "../components/InstagramGallery";
 import Navbar from "@/components/Navbar";
-import { FaWhatsapp } from "react-icons/fa"; // Importa el ícono de WhatsApp
-
-// Mantén los cambios sugeridos en tu código actual
+import { FaWhatsapp } from "react-icons/fa";
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
