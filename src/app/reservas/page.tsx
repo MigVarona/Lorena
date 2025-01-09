@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { FaTrashAlt, FaSort, FaEdit, FaSearch } from "react-icons/fa";
+import { Search, ArrowUpDown, Edit } from "lucide-react";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -138,14 +138,47 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="font-sans text-black p-8 bg-gray-100 min-h-screen">
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-3xl font-semibold text-center">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-4 md:p-8 animate-fade-in">
+      <Card className="mb-8 shadow-lg border-0">
+        <CardHeader className="space-y-1 bg-white rounded-t-xl border-b border-gray-100">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent text-center">
             Dashboard de Reservas
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <p className="text-sm font-medium text-muted-foreground">Total Reservas</p>
+                <p className="text-2xl font-bold">{reservations.length}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <p className="text-sm font-medium text-muted-foreground">Pendientes</p>
+                <p className="text-2xl font-bold text-yellow-600">
+                  {reservations.filter(r => r.status === "pendiente").length}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <p className="text-sm font-medium text-muted-foreground">Confirmadas</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {reservations.filter(r => r.status === "confirmada").length}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white shadow-sm hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <p className="text-sm font-medium text-muted-foreground">Canceladas</p>
+                <p className="text-2xl font-bold text-red-600">
+                  {reservations.filter(r => r.status === "cancelada").length}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
             <div className="relative w-full md:w-1/2">
               <Input
@@ -153,12 +186,12 @@ export default function Dashboard() {
                 placeholder="Buscar reservas..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white border-gray-200 focus:border-purple-500 transition-colors"
               />
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[180px]">
+              <SelectTrigger className="w-full md:w-[180px] bg-white border-gray-200">
                 <SelectValue placeholder="Filtrar por estado" />
               </SelectTrigger>
               <SelectContent>
@@ -171,42 +204,42 @@ export default function Dashboard() {
           </div>
 
           {paginatedReservations.length === 0 ? (
-            <div className="text-center py-4">No se encontraron reservas.</div>
+            <div className="text-center py-8 text-gray-500">
+              No se encontraron reservas.
+            </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border bg-white">
+            <div className="rounded-lg border border-gray-200 bg-white overflow-hidden shadow-sm">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
-                      Nombre {sortColumn === "name" && <FaSort className="inline ml-1" />}
+                  <TableRow className="bg-gray-50 hover:bg-gray-50">
+                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("name")}>
+                      Nombre {sortColumn === "name" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
                     </TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort("email")}>
-                      Email {sortColumn === "email" && <FaSort className="inline ml-1" />}
+                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("email")}>
+                      Email {sortColumn === "email" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
                     </TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort("date")}>
-                      Fecha {sortColumn === "date" && <FaSort className="inline ml-1" />}
+                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("date")}>
+                      Fecha {sortColumn === "date" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
                     </TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort("time")}>
-                      Hora {sortColumn === "time" && <FaSort className="inline ml-1" />}
+                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("time")}>
+                      Hora {sortColumn === "time" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
                     </TableHead>
-                    <TableHead>Teléfono</TableHead>
-                    <TableHead>Servicio</TableHead>
-                    <TableHead>Mensaje</TableHead>
-                    <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
-                      Estado {sortColumn === "status" && <FaSort className="inline ml-1" />}
+                    <TableHead className="font-semibold">Teléfono</TableHead>
+                    <TableHead className="font-semibold">Servicio</TableHead>
+                    <TableHead className="font-semibold">Mensaje</TableHead>
+                    <TableHead className="cursor-pointer font-semibold" onClick={() => handleSort("status")}>
+                      Estado {sortColumn === "status" && <ArrowUpDown className="inline ml-1 h-4 w-4" />}
                     </TableHead>
-                    <TableHead>Acciones</TableHead>
+                    <TableHead className="font-semibold">Acciones</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {paginatedReservations.map((reservation, index) => {
-                    if (!reservation) return null; // Skip rendering if reservation is null
-                    const key =
-                      reservation.id ||
-                      `${reservation.name}-${reservation.date}-${index}`;
+                    if (!reservation) return null;
+                    const key = reservation.id || `${reservation.name}-${reservation.date}-${index}`;
                     return (
-                      <TableRow key={key}>
-                        <TableCell>{reservation.name || 'N/A'}</TableCell>
+                      <TableRow key={key} className="hover:bg-gray-50 transition-colors">
+                        <TableCell className="font-medium">{reservation.name || 'N/A'}</TableCell>
                         <TableCell>{reservation.email || 'N/A'}</TableCell>
                         <TableCell>{reservation.date || 'N/A'}</TableCell>
                         <TableCell>{reservation.time || 'N/A'}</TableCell>
@@ -217,10 +250,17 @@ export default function Dashboard() {
                           <Badge
                             variant={
                               reservation.status === "pendiente"
-                                ? "warning"
+                                ? "secondary"
                                 : reservation.status === "confirmada"
-                                ? "success"
+                                ? "default"
                                 : "destructive"
+                            }
+                            className={
+                              reservation.status === "pendiente"
+                                ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
+                                : reservation.status === "confirmada"
+                                ? "bg-green-100 text-green-800 hover:bg-green-100"
+                                : "bg-red-100 text-red-800 hover:bg-red-100"
                             }
                           >
                             {reservation.status || 'N/A'}
@@ -228,11 +268,12 @@ export default function Dashboard() {
                         </TableCell>
                         <TableCell>
                           <Button
-                            variant="secondary"
+                            variant="ghost"
                             size="sm"
                             onClick={() => handleEdit(reservation)}
+                            className="hover:bg-purple-50 hover:text-purple-600"
                           >
-                            <FaEdit className="mr-2 h-4 w-4" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Editar
                           </Button>
                         </TableCell>
@@ -243,30 +284,30 @@ export default function Dashboard() {
               </Table>
             </div>
           )}
+
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="border-gray-200 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Anterior
+            </Button>
+            <span className="text-sm text-gray-600">
+              Página {currentPage} de {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="border-gray-200 hover:bg-gray-50 hover:text-gray-900"
+            >
+              Siguiente
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
-      <div className="flex justify-center mt-4">
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="mr-2"
-        >
-          Anterior
-        </Button>
-        <span className="mx-4 self-center">
-          Página {currentPage} de {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="ml-2"
-        >
-          Siguiente
-        </Button>
-      </div>
 
       <DeleteConfirmationDialog
         isOpen={deleteId !== null}

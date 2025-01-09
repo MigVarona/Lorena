@@ -36,7 +36,7 @@ export default function Home() {
           <Image
             width={1200}
             height={400}
-            src="/pexels-heyho-7195802.jpg"
+            src="/Lorena Varona Salon.jpeg"
             alt="Peluquería de mujeres"
             className="object-cover w-full h-full"
             style={{ opacity: 0.7 }}
@@ -44,7 +44,7 @@ export default function Home() {
         </div>
         <div className="relative z-10 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Bienvenida a Belleza Única
+            Bienvenida a Lorena Varona
           </h2>
           <p className="text-lg mb-6 max-w-2xl mx-auto">
             El estilo que siempre soñaste, ahora al alcance de tus manos.
