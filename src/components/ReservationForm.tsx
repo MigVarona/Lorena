@@ -1,14 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import {
-  Calendar,
-  Clock,
-  Mail,
-  MessageSquare,
-  Phone,
-  User,
-} from "lucide-react";
+import { Calendar } from "@/components/ui/Calendar";
+import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -33,7 +28,10 @@ interface IFormInput {
 }
 
 const ReservationForm = () => {
-  const { register, handleSubmit, setValue } = useForm<IFormInput>();
+  const { register, handleSubmit, setValue, watch } = useForm<IFormInput>();
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const selectedDate = watch("date");
 
   const services = [
     { name: "Lavado y Peinado" },
@@ -66,6 +64,27 @@ const ReservationForm = () => {
       console.error("Error en la solicitud:", error);
     }
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target as Node)
+      ) {
+        setCalendarOpen(false);
+      }
+    };
+
+    if (calendarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [calendarOpen]);
 
   return (
     <section id="reserva" className="py-16 px-4">
@@ -143,12 +162,30 @@ const ReservationForm = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Fecha</label>
                   <div className="relative">
-                    <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       {...register("date", { required: true })}
-                      className="pl-10"
-                      type="date"
+                      value={selectedDate || ""}
+                      onFocus={() => setCalendarOpen(true)}
+                      readOnly
+                      className="cursor-pointer"
+                      placeholder="Selecciona una fecha"
                     />
+                    {calendarOpen && (
+                      <div
+                        ref={calendarRef}
+                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded"
+                      >
+                        <Calendar
+                          onSelect={(date) => {
+                            setValue(
+                              "date",
+                              date.toLocaleDateString("en-CA") // Formato ISO (YYYY-MM-DD) compatible con formularios
+                            );
+                            setCalendarOpen(false);
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 

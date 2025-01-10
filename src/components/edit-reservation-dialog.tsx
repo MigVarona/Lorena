@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-// Añadir id a las props
 interface EditReservationDialogProps {
   reservation: { id: string; date: string; time: string }; // Añadir id
   onClose: () => void;
