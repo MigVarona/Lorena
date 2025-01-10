@@ -225,7 +225,7 @@ export default function Dashboard() {
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="end">
                   <Calendar
-                    selected={newBlockedDate ? [new Date(newBlockedDate)] : []}
+                    selected={newBlockedDate ? new Date(newBlockedDate) : undefined}
                     onSelect={(date) => {
                       addBlockedDate(date);
                     }}
