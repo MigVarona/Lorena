@@ -7,6 +7,7 @@ import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
   Select,
   SelectContent,
@@ -159,7 +160,7 @@ const ReservationForm = () => {
                 </div>
 
                 {/* Fecha */}
-                <div className="space-y-2">
+                <div className="">
                   <label className="text-sm font-medium">Fecha</label>
                   <div className="relative">
                     <Input
@@ -173,10 +174,13 @@ const ReservationForm = () => {
                     {calendarOpen && (
                       <div
                         ref={calendarRef}
-                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded"
+                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded transition-transform transform"
+                        style={{
+                          left: "-5%", // Ajusta este valor para moverlo a la izquierda según necesites
+                        }}
                       >
                         <Calendar
-                        className="w-auto" 
+                          className="w-auto"
                           onSelect={(date) => {
                             setValue(
                               "date",
