@@ -28,7 +28,7 @@ export default function Navbar() {
         {/* Hamburger menu button for mobile */}
         <button
           onClick={toggleMenu}
-          className="md:hidden"
+          className="md:hidden absolute top-4 right-4"
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
         >
           {isMenuOpen ? (
@@ -64,7 +64,7 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="absolute top-16 left-0 right-0 bg-white shadow-lg md:hidden z-50">
+          <div className="absolute top-full left-0 right-0 bg-white shadow-lg md:hidden z-50">
             <ul className="flex flex-col py-2">
               <li>
                 <Link
