@@ -14,7 +14,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-black text-white p-4 shadow-md fixed w-full z-50">
-      <div className="flex justify-between items-center max-w-6xl mx-auto">
+      <div className="flex justify-between items-center max-w-6xl mx-auto relative">
         <Link href="/" passHref>
           <Image
             src="/Lorena Varona Logo.png"
