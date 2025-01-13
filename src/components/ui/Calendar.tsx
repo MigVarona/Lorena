@@ -8,13 +8,24 @@ interface CalendarProps {
   selected?: Date;
   onSelect: (date: Date) => void;
   className?: string;
+  blockedDates?: string[]; // Propiedad para pasar fechas bloqueadas
 }
 
-export const Calendar: React.FC<CalendarProps> = ({ selected, onSelect }) => {
+export const Calendar: React.FC<CalendarProps> = ({
+  selected,
+  onSelect,
+  blockedDates = [],
+}) => {
+  // Convierte las fechas bloqueadas en objetos Date
+  const blockedDatesSet = new Set(
+    blockedDates.map((date) => new Date(date).toDateString())
+  );
+
   const isDisabled = (date: Date) => {
     const day = date.getDay();
-    return day === 1 || day === 0;
+    return day === 1 || day === 0 || blockedDatesSet.has(date.toDateString());
   };
+
   return (
     <div>
       <DayPicker
@@ -26,7 +37,7 @@ export const Calendar: React.FC<CalendarProps> = ({ selected, onSelect }) => {
           onSelect(date);
         }}
         modifiers={{
-          disabled: isDisabled, // Aquí aplicamos la lógica para días deshabilitados
+          disabled: isDisabled, // Lógica para deshabilitar días
         }}
       />
     </div>

@@ -32,6 +32,7 @@ const ReservationForm = () => {
   const { register, handleSubmit, setValue, watch } = useForm<IFormInput>();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
+  const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const selectedDate = watch("date");
 
   const services = [
@@ -42,6 +43,27 @@ const ReservationForm = () => {
     { name: "Maquillaje" },
     { name: "Corte caballero" },
   ];
+
+  // Obtener fechas bloqueadas del servidor
+  useEffect(() => {
+    async function fetchBlockedDates() {
+      try {
+        const response = await fetch("/api/blocked-dates");
+        const result = await response.json();
+
+        if (response.ok) {
+          const dates = result.data.map((item: { date: string }) => item.date);
+          setBlockedDates(dates);
+        } else {
+          console.error("Error al obtener las fechas bloqueadas:", result.error);
+        }
+      } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+      }
+    }
+
+    fetchBlockedDates();
+  }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const dataWithStatus = { ...data, status: "pendiente" };
@@ -174,20 +196,18 @@ const ReservationForm = () => {
                     {calendarOpen && (
                       <div
                         ref={calendarRef}
-                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded transition-transform transform"
-                        style={{
-                          left: "-5%", // Ajusta este valor para moverlo a la izquierda según necesites
-                        }}
+                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded"
                       >
                         <Calendar
                           className="w-auto"
                           onSelect={(date) => {
                             setValue(
                               "date",
-                              date.toLocaleDateString("en-CA") // Formato ISO (YYYY-MM-DD) compatible con formularios
+                              date.toLocaleDateString("en-CA")
                             );
                             setCalendarOpen(false);
                           }}
+                          blockedDates={blockedDates} // Pasa las fechas bloqueadas
                         />
                       </div>
                     )}
@@ -195,15 +215,30 @@ const ReservationForm = () => {
                 </div>
 
                 {/* Hora */}
-                <div className="space-y-2">
+                <div>
                   <label className="text-sm font-medium">Hora</label>
                   <div className="relative">
                     <Clock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
+                    <select
                       {...register("time", { required: true })}
-                      className="pl-10"
-                      type="time"
-                    />
+                      defaultValue=""
+                      className="pl-10 w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-300"
+                    >
+                      <option value="" disabled>
+                        Selecciona una hora
+                      </option>
+                      {Array.from({ length: 10 }).map((_, index) => {
+                        const hour = 10 + index;
+                        const startTime = `${hour
+                          .toString()
+                          .padStart(2, "0")}:30`;
+                        return (
+                          <option key={startTime} value={startTime}>
+                            {startTime}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
                 </div>
               </div>
