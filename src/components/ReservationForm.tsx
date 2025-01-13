@@ -176,6 +176,7 @@ const ReservationForm = () => {
                         className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded"
                       >
                         <Calendar
+                        className="w-auto" 
                           onSelect={(date) => {
                             setValue(
                               "date",
