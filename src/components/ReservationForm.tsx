@@ -195,9 +195,12 @@ const ReservationForm = () => {
                     />
                     {calendarOpen && (
                       <div
-                        ref={calendarRef}
-                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded"
-                      >
+                      ref={calendarRef}
+                      className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded transition-transform transform"
+                      style={{
+                        left: "-5%", // Ajusta este valor para moverlo a la izquierda según necesites
+                      }}
+                    >
                         <Calendar
                           className="w-auto"
                           onSelect={(date) => {
