@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { FaTrashAlt, FaSort, FaEdit, FaSearch, FaPlus, FaCalendarAlt } from "react-icons/fa";
+import {
+  FaTrashAlt,
+  FaSort,
+  FaEdit,
+  FaSearch,
+  FaPlus,
+  FaCalendarAlt,
+} from "react-icons/fa";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -23,7 +30,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/Calendar";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -223,16 +234,17 @@ export default function Dashboard() {
                     <FaPlus className="mr-2" /> Agregar Fecha Bloqueada
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end">
+                <PopoverContent className="w-auto" align="end">
                   <Calendar
-                    selected={newBlockedDate ? new Date(newBlockedDate) : undefined}
+                    selected={
+                      newBlockedDate ? new Date(newBlockedDate) : undefined
+                    }
                     onSelect={(date) => {
                       addBlockedDate(date);
                     }}
                   />
                 </PopoverContent>
               </Popover>
-              
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {blockedDates.map((blockedDate) => (
@@ -243,7 +255,9 @@ export default function Dashboard() {
                   <div className="flex items-center">
                     <FaCalendarAlt className="text-gray-400 mr-2" />
                     <span className="font-medium">
-                      {format(new Date(blockedDate.date), "d MMM yyyy", { locale: es })}
+                      {format(new Date(blockedDate.date), "d MMM yyyy", {
+                        locale: es,
+                      })}
                     </span>
                   </div>
                   <Button
@@ -431,4 +445,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
