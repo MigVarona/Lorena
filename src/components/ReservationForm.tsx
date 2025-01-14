@@ -7,6 +7,7 @@ import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 import {
   Select,
@@ -28,11 +29,18 @@ interface IFormInput {
   status: string;
 }
 
+interface Reservation {
+  id: number;
+  date: string;
+  time: string;
+}
+
 const ReservationForm = () => {
-  const { register, handleSubmit, setValue, watch } = useForm<IFormInput>();
+  const { register, handleSubmit, setValue, watch, reset } = useForm<IFormInput>();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
+  const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const selectedDate = watch("date");
 
   const services = [
@@ -43,6 +51,35 @@ const ReservationForm = () => {
     { name: "Maquillaje" },
     { name: "Corte caballero" },
   ];
+
+  // Obtener reservas cuando se selecciona una fecha
+  useEffect(() => {
+    async function fetchReservations() {
+      if (!selectedDate) return;
+
+      try {
+        const response = await fetch("/api/reservas");
+        const { data } = await response.json();
+        
+        // Filtrar las reservas para la fecha seleccionada
+        const reservationsForDate = data.filter(
+          (reservation: Reservation) => reservation.date === selectedDate
+        );
+        
+        // Extraer las horas bloqueadas
+        const times = reservationsForDate.map(
+          (reservation: Reservation) => reservation.time
+        );
+        setBlockedTimes(times);
+        
+      } catch (error) {
+        console.error("Error al obtener reservas:", error);
+        toast.error("Error al cargar los horarios disponibles");
+      }
+    }
+
+    fetchReservations();
+  }, [selectedDate]);
 
   // Obtener fechas bloqueadas del servidor
   useEffect(() => {
@@ -56,6 +93,7 @@ const ReservationForm = () => {
           setBlockedDates(dates);
         } else {
           console.error("Error al obtener las fechas bloqueadas:", result.error);
+          toast.error("Error al cargar las fechas bloqueadas");
         }
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
@@ -80,11 +118,16 @@ const ReservationForm = () => {
       const result = await response.json();
       if (response.ok) {
         console.log("Reserva realizada con éxito:", result);
+        toast.success("Reserva realizada con éxito");
+        reset(); // Resetear el formulario
+        setCalendarOpen(false); // Cerrar el calendario si está abierto
       } else {
         console.error("Error al realizar la reserva:", result.error);
+        toast.error("Error al realizar la reserva");
       }
     } catch (error) {
       console.error("Error en la solicitud:", error);
+      toast.error("Error al procesar la solicitud");
     }
   };
 
@@ -195,12 +238,12 @@ const ReservationForm = () => {
                     />
                     {calendarOpen && (
                       <div
-                      ref={calendarRef}
-                      className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded transition-transform transform"
-                      style={{
-                        left: "-5%", // Ajusta este valor para moverlo a la izquierda según necesites
-                      }}
-                    >
+                        ref={calendarRef}
+                        className="absolute z-10 mt-2 bg-white shadow-lg p-4 rounded transition-transform transform"
+                        style={{
+                          left: "-5%",
+                        }}
+                      >
                         <Calendar
                           className="w-auto"
                           onSelect={(date) => {
@@ -210,7 +253,7 @@ const ReservationForm = () => {
                             );
                             setCalendarOpen(false);
                           }}
-                          blockedDates={blockedDates} // Pasa las fechas bloqueadas
+                          blockedDates={blockedDates}
                         />
                       </div>
                     )}
@@ -232,12 +275,15 @@ const ReservationForm = () => {
                       </option>
                       {Array.from({ length: 10 }).map((_, index) => {
                         const hour = 10 + index;
-                        const startTime = `${hour
-                          .toString()
-                          .padStart(2, "0")}:30`;
+                        const startTime = `${hour.toString().padStart(2, "0")}:30:00`;
+                        const isBlocked = blockedTimes.includes(startTime);
                         return (
-                          <option key={startTime} value={startTime}>
-                            {startTime}
+                          <option 
+                            key={startTime} 
+                            value={startTime}
+                            disabled={isBlocked}
+                          >
+                            {startTime.slice(0, -3)} {isBlocked ? '(No disponible)' : ''}
                           </option>
                         );
                       })}
