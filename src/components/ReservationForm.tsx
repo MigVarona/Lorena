@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Calendar } from "@/components/ui/Calendar";
-import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
+import { Clock, Mail, MessageSquare, Phone, User } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface IFormInput {
   phone: string;
@@ -36,12 +46,15 @@ interface Reservation {
 }
 
 const ReservationForm = () => {
-  const { register, handleSubmit, setValue, watch, reset } = useForm<IFormInput>();
+  const { register, handleSubmit, setValue, watch, reset } =
+    useForm<IFormInput>();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
   const [blockedDates, setBlockedDates] = useState<string[]>([]);
   const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
   const selectedDate = watch("date");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [formData, setFormData] = useState<IFormInput | null>(null);
 
   const services = [
     { name: "Lavado y Peinado" },
@@ -60,18 +73,17 @@ const ReservationForm = () => {
       try {
         const response = await fetch("/api/reservas");
         const { data } = await response.json();
-        
+
         // Filtrar las reservas para la fecha seleccionada
         const reservationsForDate = data.filter(
           (reservation: Reservation) => reservation.date === selectedDate
         );
-        
+
         // Extraer las horas bloqueadas
         const times = reservationsForDate.map(
           (reservation: Reservation) => reservation.time
         );
         setBlockedTimes(times);
-        
       } catch (error) {
         console.error("Error al obtener reservas:", error);
         toast.error("Error al cargar los horarios disponibles");
@@ -92,7 +104,10 @@ const ReservationForm = () => {
           const dates = result.data.map((item: { date: string }) => item.date);
           setBlockedDates(dates);
         } else {
-          console.error("Error al obtener las fechas bloqueadas:", result.error);
+          console.error(
+            "Error al obtener las fechas bloqueadas:",
+            result.error
+          );
           toast.error("Error al cargar las fechas bloqueadas");
         }
       } catch (error) {
@@ -103,8 +118,15 @@ const ReservationForm = () => {
     fetchBlockedDates();
   }, []);
 
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const dataWithStatus = { ...data, status: "pendiente" };
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    setFormData(data);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmedSubmit = async () => {
+    if (!formData) return;
+
+    const dataWithStatus = { ...formData, status: "pendiente" };
 
     try {
       const response = await fetch("/api/reservas", {
@@ -119,8 +141,8 @@ const ReservationForm = () => {
       if (response.ok) {
         console.log("Reserva realizada con éxito:", result);
         toast.success("Reserva realizada con éxito");
-        reset(); // Resetear el formulario
-        setCalendarOpen(false); // Cerrar el calendario si está abierto
+        reset();
+        setCalendarOpen(false);
       } else {
         console.error("Error al realizar la reserva:", result.error);
         toast.error("Error al realizar la reserva");
@@ -129,6 +151,8 @@ const ReservationForm = () => {
       console.error("Error en la solicitud:", error);
       toast.error("Error al procesar la solicitud");
     }
+
+    setIsConfirmOpen(false);
   };
 
   useEffect(() => {
@@ -153,6 +177,7 @@ const ReservationForm = () => {
   }, [calendarOpen]);
 
   return (
+    <div>
     <section id="reserva" className="py-16 px-4">
       <div className="max-w-4xl mx-auto">
         <Card className="backdrop-blur-sm bg-white/90 shadow-xl">
@@ -247,10 +272,7 @@ const ReservationForm = () => {
                         <Calendar
                           className="w-auto"
                           onSelect={(date) => {
-                            setValue(
-                              "date",
-                              date.toLocaleDateString("en-CA")
-                            );
+                            setValue("date", date.toLocaleDateString("en-CA"));
                             setCalendarOpen(false);
                           }}
                           blockedDates={blockedDates}
@@ -275,15 +297,18 @@ const ReservationForm = () => {
                       </option>
                       {Array.from({ length: 10 }).map((_, index) => {
                         const hour = 10 + index;
-                        const startTime = `${hour.toString().padStart(2, "0")}:30:00`;
+                        const startTime = `${hour
+                          .toString()
+                          .padStart(2, "0")}:30:00`;
                         const isBlocked = blockedTimes.includes(startTime);
                         return (
-                          <option 
-                            key={startTime} 
+                          <option
+                            key={startTime}
                             value={startTime}
                             disabled={isBlocked}
                           >
-                            {startTime.slice(0, -3)} {isBlocked ? '(No disponible)' : ''}
+                            {startTime.slice(0, -3)}{" "}
+                            {isBlocked ? "(No disponible)" : ""}
                           </option>
                         );
                       })}
@@ -318,7 +343,23 @@ const ReservationForm = () => {
         </Card>
       </div>
     </section>
+    <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Confirmar reserva</AlertDialogTitle>
+          <AlertDialogDescription>
+            ¿Estás seguro de que deseas realizar esta reserva?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirmedSubmit}>Confirmar</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </div>
   );
 };
 
 export default ReservationForm;
+
