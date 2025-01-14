@@ -28,7 +28,7 @@ export default function Navbar() {
         {/* Hamburger menu button for mobile */}
         <button
           onClick={toggleMenu}
-          className="md:hidden absolute top-4 right-4"
+          className="md:hidden absoluteright-4"
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
         >
           {isMenuOpen ? (
