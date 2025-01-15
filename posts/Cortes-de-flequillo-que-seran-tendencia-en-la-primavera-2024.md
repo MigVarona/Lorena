@@ -6,8 +6,6 @@ date: "2024-12-30"
 
 ![Descripción de la imagen](/Cortes-de-flequillo-que-seran-tendencia-en-la-primavera-2024.jpg)
 
-## Cortes de flequillo en tendencia esta primavera 2024
-
 La primavera está a la vuelta de la esquina y, con ella, la oportunidad de renovar nuestro look. En este artículo, te hablaré sobre los cortes de flequillo en tendencia esta primavera 2024.
 
 ### Cortes de flequillo que más realizo esta primavera en Lorena Varona
