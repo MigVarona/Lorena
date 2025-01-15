@@ -2,17 +2,25 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
 import { createElement } from "react";
-import rehypeSanitize from "rehype-sanitize";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export const metadata = {
   title: "Blog",
   description: "Lee nuestras últimas entradas del blog",
 };
 
-export default function BlogPage() {
+export default function BlogPage({ searchParams }: { searchParams: { page?: string } }) {
+  const currentPage = Number(searchParams.page) || 1;
+  const postsPerPage = 6;
+
   const postsDirectory = path.join(process.cwd(), "posts");
 
   let filenames: string[] = [];
@@ -32,6 +40,11 @@ export default function BlogPage() {
       content,
     };
   });
+
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);  // Usar currentPosts
 
   const ImageWrapper = ({ node, ...props }: any) => {
     if (node.tagName === "img") {
@@ -53,7 +66,7 @@ export default function BlogPage() {
         <h1 className="text-5xl font-bold mb-20 text-center">Blog</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map((post: any) => {
+          {currentPosts.map((post: any) => {  // Usar currentPosts aquí
             const imageRegex = /!\[.*\]\((.*)\)/;
             const imageMatch = post.content.match(imageRegex);
             const imageUrl = imageMatch ? imageMatch[1] : "/placeholder.svg";
@@ -106,6 +119,33 @@ export default function BlogPage() {
             );
           })}
         </div>
+
+        <Pagination className="mt-8">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href={currentPage > 1 ? `/blog?page=${currentPage - 1}` : '#'}
+                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+            {[...Array(totalPages)].map((_, i) => (
+              <PaginationItem key={i}>
+                <PaginationLink
+                  href={`/blog?page=${i + 1}`}
+                  isActive={currentPage === i + 1}
+                >
+                  {i + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext
+                href={currentPage < totalPages ? `/blog?page=${currentPage + 1}` : '#'}
+                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
