@@ -6,8 +6,6 @@ date: "2024-12-30"
 
 ![Descripción de la imagen](/Tratamientos-esenciales-en-otono-para-tener-una-cabello-radiante.jpg)
 
-## Tratamientos recomendados para el otoño
-
 Te presentamos los tratamientos esenciales en otoño para tener un cabello radiante. En el otoño los días van siendo más fríos, se empieza a usar la calefacción y esto hace que nuestro cabello se reseque, pierda brillo y se vuelva más quebradizo. Pero no te preocupes, ¡tengo la solución! En mi salón, Lorena Varona, te ofrecemos una variedad de tratamientos personalizados para que tu cabello luzca radiante y saludable durante toda la temporada.
 
 ### ¿Por qué es tan importante cuidar nuestro cabello en otoño?

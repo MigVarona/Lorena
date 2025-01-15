@@ -6,8 +6,6 @@ date: "2024-12-30"
 
 ![Descripción de la imagen](/Cabello-seco-o-dañado.jpg)
 
-## Recupera tu cabello con Nak Structure Complex
-
 Si tienes el cabello seco o dañado por productos químicos, planchas, utensilios de calor, etc., y ya no sabes qué hacer, ¡te presentamos el nuevo sistema Nak Structure Complex!
 
 ### ¿Estás preparada para recuperar tu cabello?
