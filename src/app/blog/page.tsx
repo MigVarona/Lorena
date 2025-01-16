@@ -2,14 +2,7 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "../../components/ui/pagination"; // Asegúrate de importar el componente de paginación correctamente.
 
 export const metadata = {
   title: "Blog",
@@ -19,10 +12,11 @@ export const metadata = {
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { page?: string };
 }) {
-  const params = await searchParams;
-  const currentPage = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
+  // Esperamos a que searchParams esté resuelto
+  const { page = "1" } = await searchParams;
+  const currentPage = Number(page);
   const postsPerPage = 6;
 
   const postsDirectory = path.join(process.cwd(), "posts");
@@ -57,7 +51,7 @@ export default async function BlogPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentPosts.map((post: any) => {
-            const imageRegex = /!\[.*?\]\((.*?)\)/;
+            const imageRegex = /!\[.*\]\((.*)\)/;
             const imageMatch = post.content.match(imageRegex);
             const imageUrl = imageMatch ? imageMatch[1] : "/placeholder.svg";
 
@@ -73,7 +67,7 @@ export default async function BlogPage({
                 <article className="bg-white rounded-xl shadow-md overflow-hidden h-full hover:shadow-xl transition-shadow duration-300">
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={imageUrl || "/placeholder.svg"}
+                      src={imageUrl}
                       alt={post.title}
                       className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                     />
@@ -110,6 +104,7 @@ export default async function BlogPage({
           })}
         </div>
 
+        {/* Paginación */}
         <Pagination className="mt-8">
           <PaginationContent>
             <PaginationItem>
