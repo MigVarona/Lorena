@@ -2,20 +2,28 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "../../components/ui/pagination"; // Asegúrate de importar el componente de paginación correctamente.
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext } from "../../components/ui/pagination";
 
+// Definir metadata
 export const metadata = {
   title: "Blog",
   description: "Lee nuestras últimas entradas del blog",
 };
 
+// Tipos de `params` y `searchParams` como promesas
+type Params = Promise<{ slug: string }>;
+type SearchParams = Promise<{ page?: string }>;
+
+// Función principal del Blog
 export default async function BlogPage({
-  searchParams,
+  params, // Recibiendo `params` como promesa
+  searchParams, // Recibiendo `searchParams` como promesa
 }: {
-  searchParams: { page?: string };
+  params: Params;
+  searchParams: SearchParams;
 }) {
-  // Esperamos a que searchParams esté resuelto
-  const { page = "1" } = await searchParams; // Await para garantizar que searchParams esté resuelto
+  // Esperamos a que ambas promesas se resuelvan
+  const { page = "1" } = await searchParams; // Resolviendo la promesa de `searchParams`
   const currentPage = Number(page);
   const postsPerPage = 6;
 
@@ -110,9 +118,7 @@ export default async function BlogPage({
             <PaginationItem>
               <PaginationPrevious
                 href={currentPage > 1 ? `/blog?page=${currentPage - 1}` : "#"}
-                className={
-                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
-                }
+                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
             {[...Array(totalPages)].map((_, i) => (
@@ -127,16 +133,8 @@ export default async function BlogPage({
             ))}
             <PaginationItem>
               <PaginationNext
-                href={
-                  currentPage < totalPages
-                    ? `/blog?page=${currentPage + 1}`
-                    : "#"
-                }
-                className={
-                  currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
+                href={currentPage < totalPages ? `/blog?page=${currentPage + 1}` : "#"}
+                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
               />
             </PaginationItem>
           </PaginationContent>
