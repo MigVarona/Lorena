@@ -17,14 +17,12 @@ export const metadata = {
   description: "Lee nuestras últimas entradas del blog",
 };
 
-export default async function BlogPage({
+export default function BlogPage({
   searchParams = {},
 }: {
   searchParams?: { page?: string };
 }) {
-  // Acceder asincrónicamente a searchParams
-  const params = await searchParams;
-  const currentPage = Number(params?.page) || 1;
+  const currentPage = Number(searchParams?.page) || 1;
   const postsPerPage = 6;
 
   const postsDirectory = path.join(process.cwd(), "posts");
