@@ -1,5 +1,3 @@
-/* @next-codemod-ignore */
-
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
@@ -16,8 +14,8 @@ export default async function BlogPage({
 }: {
   searchParams: { page?: string };
 }) {
-  // Esperar correctamente el valor de searchParams
-  const { page = "1" } = await searchParams;  // Asegurándote de que se espera antes de acceder
+  // Esperamos a que searchParams esté resuelto
+  const { page = "1" } = await searchParams; // Await para garantizar que searchParams esté resuelto
   const currentPage = Number(page);
   const postsPerPage = 6;
 
