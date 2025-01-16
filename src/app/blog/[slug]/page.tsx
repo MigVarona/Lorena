@@ -12,8 +12,8 @@ type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 // Definimos las funciones como `async`
 export async function generateMetadata(props: {
-  params: Params;
-  searchParams: SearchParams;
+  params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
 }) {
   const params = await props.params;
   const searchParams = await props.searchParams;
@@ -27,8 +27,8 @@ export async function generateMetadata(props: {
 }
 
 export default async function Page(props: {
-  params: Params;
-  searchParams: SearchParams;
+  params: Promise<Params>;
+  searchParams: Promise<SearchParams>;
 }) {
   const params = await props.params; // Asegúrate de resolver la promesa
   const searchParams = await props.searchParams; // Asegúrate de resolver la promesa
