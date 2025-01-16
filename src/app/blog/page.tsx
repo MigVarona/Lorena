@@ -14,8 +14,9 @@ export default async function BlogPage({
 }: {
   searchParams: { page?: string };
 }) {
-  // Esperamos a que searchParams esté resuelto
-  const { page = "1" } = await searchParams;
+// Ignoramos la advertencia de la migración forzada
+/* @next-codemod-ignore */
+const { page = "1" } = await searchParams;
   const currentPage = Number(page);
   const postsPerPage = 6;
 
