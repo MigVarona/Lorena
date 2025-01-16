@@ -17,8 +17,14 @@ export const metadata = {
   description: "Lee nuestras últimas entradas del blog",
 };
 
-export default function BlogPage({ searchParams }: { searchParams: { page?: string } }) {
-  const currentPage = Number(searchParams.page) || 1;
+export default async function BlogPage({
+  searchParams = {},
+}: {
+  searchParams?: { page?: string };
+}) {
+  // Acceder asincrónicamente a searchParams
+  const params = await searchParams;
+  const currentPage = Number(params?.page) || 1;
   const postsPerPage = 6;
 
   const postsDirectory = path.join(process.cwd(), "posts");
@@ -44,7 +50,7 @@ export default function BlogPage({ searchParams }: { searchParams: { page?: stri
   const totalPages = Math.ceil(posts.length / postsPerPage);
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);  // Usar currentPosts
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   const ImageWrapper = ({ node, ...props }: any) => {
     if (node.tagName === "img") {
@@ -66,7 +72,7 @@ export default function BlogPage({ searchParams }: { searchParams: { page?: stri
         <h1 className="text-5xl font-bold mb-20 text-center">Blog</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {currentPosts.map((post: any) => {  // Usar currentPosts aquí
+          {currentPosts.map((post: any) => {
             const imageRegex = /!\[.*\]\((.*)\)/;
             const imageMatch = post.content.match(imageRegex);
             const imageUrl = imageMatch ? imageMatch[1] : "/placeholder.svg";
@@ -124,8 +130,10 @@ export default function BlogPage({ searchParams }: { searchParams: { page?: stri
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href={currentPage > 1 ? `/blog?page=${currentPage - 1}` : '#'}
-                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                href={currentPage > 1 ? `/blog?page=${currentPage - 1}` : "#"}
+                className={
+                  currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                }
               />
             </PaginationItem>
             {[...Array(totalPages)].map((_, i) => (
@@ -140,8 +148,16 @@ export default function BlogPage({ searchParams }: { searchParams: { page?: stri
             ))}
             <PaginationItem>
               <PaginationNext
-                href={currentPage < totalPages ? `/blog?page=${currentPage + 1}` : '#'}
-                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                href={
+                  currentPage < totalPages
+                    ? `/blog?page=${currentPage + 1}`
+                    : "#"
+                }
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </PaginationItem>
           </PaginationContent>
