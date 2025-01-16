@@ -1,4 +1,6 @@
 import fs from "fs";
+import { GetServerSideProps } from "next";
+
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
@@ -18,10 +20,8 @@ export const metadata = {
 };
 
 export default function BlogPage({
-  searchParams = {},
-}: {
-  searchParams?: { page?: string };
-}) {
+  searchParams,
+}: { searchParams?: { page?: string } }) {
   const currentPage = Number(searchParams?.page) || 1;
   const postsPerPage = 6;
 
