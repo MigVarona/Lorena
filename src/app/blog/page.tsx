@@ -1,10 +1,7 @@
 import fs from "fs";
-import { GetServerSideProps } from "next";
-
 import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
-import { createElement } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -19,10 +16,13 @@ export const metadata = {
   description: "Lee nuestras últimas entradas del blog",
 };
 
-export default function BlogPage({
+export default async function BlogPage({
   searchParams,
-}: { searchParams?: { page?: string } }) {
-  const currentPage = Number(searchParams?.page) || 1;
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const params = await searchParams;
+  const currentPage = typeof params.page === 'string' ? parseInt(params.page, 10) : 1;
   const postsPerPage = 6;
 
   const postsDirectory = path.join(process.cwd(), "posts");
@@ -50,20 +50,6 @@ export default function BlogPage({
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
-  const ImageWrapper = ({ node, ...props }: any) => {
-    if (node.tagName === "img") {
-      return createElement(
-        "div",
-        { className: "flex justify-center my-6" },
-        createElement("img", {
-          ...props,
-          className: "rounded-lg shadow-lg object-cover w-full h-64",
-        })
-      );
-    }
-    return createElement(node.tagName, props);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="container mx-auto py-12">
@@ -71,7 +57,7 @@ export default function BlogPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {currentPosts.map((post: any) => {
-            const imageRegex = /!\[.*\]\((.*)\)/;
+            const imageRegex = /!\[.*?\]\((.*?)\)/;
             const imageMatch = post.content.match(imageRegex);
             const imageUrl = imageMatch ? imageMatch[1] : "/placeholder.svg";
 
@@ -87,7 +73,7 @@ export default function BlogPage({
                 <article className="bg-white rounded-xl shadow-md overflow-hidden h-full hover:shadow-xl transition-shadow duration-300">
                   <div className="relative h-48 overflow-hidden">
                     <img
-                      src={imageUrl}
+                      src={imageUrl || "/placeholder.svg"}
                       alt={post.title}
                       className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                     />
