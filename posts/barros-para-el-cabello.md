@@ -23,18 +23,23 @@ El uso de barros capilares ha alcanzado gran popularidad debido a que se trata d
 ## Beneficios de los Barros para el Cabello
 
 ### 1. **Limpieza profunda y detox:**
+
 Los barros para el cabello actúan como un limpiador profundo, eliminando las impurezas acumuladas en el cuero cabelludo y el cabello. Son ideales para eliminar la contaminación, el exceso de grasa y los residuos de productos capilares.
 
 ### 2. **Equilibrio en la producción de grasa:**
+
 Si tienes el cabello graso, los barros como la **arcilla verde** pueden ayudarte a regular la producción de sebo, manteniendo tu cuero cabelludo fresco y equilibrado.
 
 ### 3. **Revitalización y fortalecimiento:**
+
 Los minerales presentes en los barros, como el magnesio, el calcio y el hierro, reparan y nutren el cabello, mejorando su resistencia y reduciendo las puntas abiertas.
 
 ### 4. **Estimulación del crecimiento:**
+
 Al mejorar la circulación sanguínea en el cuero cabelludo, los barros capilares pueden estimular el crecimiento de un cabello más saludable.
 
 ### 5. **Propiedades calmantes:**
+
 Los barros también tienen propiedades antiinflamatorias, lo que los convierte en un tratamiento ideal para aliviar picazón e irritación en el cuero cabelludo.
 
 ---
