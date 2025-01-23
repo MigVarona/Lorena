@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useBlockedDates } from "@/hooks/useBlockedDates";
 import { useReservations } from "@/hooks/useReservations";
+import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Calendar } from "@/components/ui/Calendar";
 import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
@@ -51,13 +52,14 @@ const ReservationForm = () => {
   const { register, handleSubmit, setValue, watch, reset } =
     useForm<IFormInput>();
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const calendarRef = useRef<HTMLDivElement>(null);
+  const calendarRef = useRef<HTMLDivElement>(null as unknown as HTMLDivElement);
+  useOutsideClick(calendarRef, () => setCalendarOpen(false), calendarOpen);
   const blockedDates = useBlockedDates();
   const selectedDate = watch("date");
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [formData, setFormData] = useState<IFormInput | null>(null);
   const blockedTimes = useReservations(selectedDate);
 
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [formData, setFormData] = useState<IFormInput | null>(null);
   const services = [
     { name: "Lavado y Peinado" },
     { name: "Color de mujer" },
@@ -104,27 +106,7 @@ const ReservationForm = () => {
     setIsConfirmOpen(false);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        calendarRef.current &&
-        !calendarRef.current.contains(event.target as Node)
-      ) {
-        setCalendarOpen(false);
-      }
-    };
-
-    if (calendarOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [calendarOpen]);
-
+  
   return (
     <div>
       <section id="reserva" className="py-16 px-4">
