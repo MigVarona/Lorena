@@ -50,18 +50,19 @@ interface Reservation {
 }
 
 const ReservationForm = () => {
-  const { register, handleSubmit, setValue, watch, reset } =
-    useForm<IFormInput>();
+  const { register, handleSubmit, setValue, watch, reset } = useForm<IFormInput>();
   const { services } = useServices();
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const calendarRef = useRef<HTMLDivElement>(null as unknown as HTMLDivElement);
+
+  const calendarRef = useRef<HTMLDivElement>(null!);
+
+  useOutsideClick(calendarRef, () => setCalendarOpen(false), true);
+
   const blockedDates = useBlockedDates();
   const selectedDate = watch("date");
   const blockedTimes = useReservations(selectedDate);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formData, setFormData] = useState<IFormInput | null>(null);
-
-
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     setFormData(data);
@@ -100,7 +101,6 @@ const ReservationForm = () => {
     setIsConfirmOpen(false);
   };
 
-  
   return (
     <div>
       <section id="reserva" className="py-16 px-4">
