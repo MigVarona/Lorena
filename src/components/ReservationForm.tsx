@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useBlockedDates } from "@/hooks/useBlockedDates";
+import { useReservations } from "@/hooks/useReservations";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Calendar } from "@/components/ui/Calendar";
 import { Clock, Mail, MessageSquare, Phone, User } from "lucide-react";
@@ -50,11 +52,11 @@ const ReservationForm = () => {
     useForm<IFormInput>();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null);
-  const [blockedDates, setBlockedDates] = useState<string[]>([]);
-  const [blockedTimes, setBlockedTimes] = useState<string[]>([]);
+  const blockedDates = useBlockedDates();
   const selectedDate = watch("date");
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formData, setFormData] = useState<IFormInput | null>(null);
+  const blockedTimes = useReservations(selectedDate);
 
   const services = [
     { name: "Lavado y Peinado" },
@@ -64,55 +66,6 @@ const ReservationForm = () => {
     { name: "Maquillaje" },
     { name: "Corte caballero" },
   ];
-
-  useEffect(() => {
-    async function fetchReservations() {
-      if (!selectedDate) return;
-
-      try {
-        const response = await fetch("/api/reservas");
-        const { data } = await response.json();
-
-        const reservationsForDate = data.filter(
-          (reservation: Reservation) => reservation.date === selectedDate
-        );
-
-        const times = reservationsForDate.map(
-          (reservation: Reservation) => reservation.time
-        );
-        setBlockedTimes(times);
-      } catch (error) {
-        console.error("Error al obtener reservas:", error);
-        toast.error("Error al cargar los horarios disponibles");
-      }
-    }
-
-    fetchReservations();
-  }, [selectedDate]);
-
-  useEffect(() => {
-    async function fetchBlockedDates() {
-      try {
-        const response = await fetch("/api/blocked-dates");
-        const result = await response.json();
-
-        if (response.ok) {
-          const dates = result.data.map((item: { date: string }) => item.date);
-          setBlockedDates(dates);
-        } else {
-          console.error(
-            "Error al obtener las fechas bloqueadas:",
-            result.error
-          );
-          toast.error("Error al cargar las fechas bloqueadas");
-        }
-      } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-      }
-    }
-
-    fetchBlockedDates();
-  }, []);
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     setFormData(data);
