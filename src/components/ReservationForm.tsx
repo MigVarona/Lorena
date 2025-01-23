@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useBlockedDates } from "@/hooks/useBlockedDates";
+import { useServices } from "@/hooks/useServices";
 import { useReservations } from "@/hooks/useReservations";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -51,23 +52,16 @@ interface Reservation {
 const ReservationForm = () => {
   const { register, handleSubmit, setValue, watch, reset } =
     useForm<IFormInput>();
+  const { services } = useServices();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const calendarRef = useRef<HTMLDivElement>(null as unknown as HTMLDivElement);
-  useOutsideClick(calendarRef, () => setCalendarOpen(false), calendarOpen);
   const blockedDates = useBlockedDates();
   const selectedDate = watch("date");
   const blockedTimes = useReservations(selectedDate);
-
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formData, setFormData] = useState<IFormInput | null>(null);
-  const services = [
-    { name: "Lavado y Peinado" },
-    { name: "Color de mujer" },
-    { name: "Tinte raíz y Lavado" },
-    { name: "Mechas balayage y lavado" },
-    { name: "Maquillaje" },
-    { name: "Corte caballero" },
-  ];
+
+
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     setFormData(data);
