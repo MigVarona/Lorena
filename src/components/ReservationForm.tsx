@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSendEmail } from "@/hooks/useSendEmail";
 import { useBlockedDates } from "@/hooks/useBlockedDates";
 import { useServices } from "@/hooks/useServices";
 import { useReservations } from "@/hooks/useReservations";
@@ -50,18 +51,21 @@ interface Reservation {
 }
 
 const ReservationForm = () => {
+  const { sendEmail } = useSendEmail();
   const { register, handleSubmit, setValue, watch, reset } =
     useForm<IFormInput>();
   const { services } = useServices();
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const calendarRef = useRef<HTMLDivElement>(null as unknown as HTMLDivElement);
+
+  const calendarRef = useRef<HTMLDivElement>(null!);
+
+  useOutsideClick(calendarRef, () => setCalendarOpen(false), true);
+
   const blockedDates = useBlockedDates();
   const selectedDate = watch("date");
   const blockedTimes = useReservations(selectedDate);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [formData, setFormData] = useState<IFormInput | null>(null);
-
-
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
     setFormData(data);
@@ -83,9 +87,28 @@ const ReservationForm = () => {
       });
 
       const result = await response.json();
+
       if (response.ok) {
         console.log("Reserva realizada con éxito:", result);
-        toast.success("Reserva realizada con éxito");
+
+        const emailResponse = await sendEmail({
+          name: dataWithStatus.name,
+          email: dataWithStatus.email,
+          message: `Hola ${dataWithStatus.name},<br><br>
+                    Gracias por realizar tu reserva. Aquí tienes los detalles:<br>
+                    - Servicio: ${dataWithStatus.service}<br>
+                    - Fecha: ${dataWithStatus.date}<br>
+                    - Hora: ${dataWithStatus.time}<br><br>
+                    ¡Esperamos verte pronto!<br>
+                    El equipo de [Tu Empresa].`,
+          service: dataWithStatus.service,  
+          date: dataWithStatus.date,       
+          time: dataWithStatus.time,       
+        });
+        
+        console.log("Correo enviado con éxito");
+        toast.success("Reserva y correo enviados con éxito");
+
         reset();
         setCalendarOpen(false);
       } else {
@@ -100,7 +123,6 @@ const ReservationForm = () => {
     setIsConfirmOpen(false);
   };
 
-  
   return (
     <div>
       <section id="reserva" className="py-16 px-4">
