@@ -103,7 +103,7 @@ const ReservationForm = () => {
                     El equipo de [Tu Empresa].`,
           service: dataWithStatus.service,  
           date: dataWithStatus.date,       
-          time: dataWithStatus.time,       
+          time: dataWithStatus.time,    
         });
         
         console.log("Correo enviado con éxito");
