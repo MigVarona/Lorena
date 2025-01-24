@@ -59,7 +59,7 @@ export async function GET() {
   }
 }
 
-// PUT: Actualizar reserva
+// PUT: Actualizar estado de reserva
 export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
   // Aseguramos que `params` se espere correctamente
   const { id } = await context.params;
@@ -73,25 +73,34 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
 
   try {
     const body = await request.json();
-    const { date, time } = body;
+    const { status } = body;
 
-    if (!date || !time) {
+    if (!status) {
       return NextResponse.json(
-        { error: "Faltan datos obligatorios" },
+        { error: "Falta el estado de la reserva" },
         { status: 400 }
       );
     }
 
-    // Ejemplo: Actualización en la base de datos
+    // Validación simple para el estado
+    const validStatuses = ["pendiente", "confirmada", "cancelada"];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: "Estado no válido" },
+        { status: 400 }
+      );
+    }
+
+    // Actualización del estado de la reserva en la base de datos
     const { data, error } = await supabase
       .from("reservas")
-      .update({ date, time })
+      .update({ status })
       .eq("id", id);
 
     if (error) {
-      console.error("Error al actualizar la reserva:", error.message);
+      console.error("Error al actualizar el estado de la reserva:", error.message);
       return NextResponse.json(
-        { error: "Error al actualizar la reserva" },
+        { error: "Error al actualizar el estado de la reserva" },
         { status: 500 }
       );
     }
