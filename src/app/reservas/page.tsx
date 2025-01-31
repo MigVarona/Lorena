@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useParams } from 'next/navigation'
+
 import {
   FaTrashAlt,
   FaSort,
@@ -57,6 +59,8 @@ interface BlockedDate {
 }
 
 export default function Dashboard() {
+  
+  const { id } = useParams<{ id: string }>();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<{
     [key: string]: "pendiente" | "confirmada" | "cancelada";
