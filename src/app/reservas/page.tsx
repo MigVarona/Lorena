@@ -91,12 +91,12 @@ export default function Dashboard() {
     }
   };
 
-  const updateReservationStatus = async (id: string, date: string, time: string) => {
+  const updateReservationStatus = async (id: string, date: string, time: string, status: string) => {
     try {
       const response = await fetch(`/api/reservas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date, time }), // Envía solo date/time
+        body: JSON.stringify({ date, time, status }), // Envía solo date/time
       });
       
       if (!response.ok) {
@@ -400,46 +400,66 @@ export default function Dashboard() {
                         <TableCell>{reservation.service || "N/A"}</TableCell>
                         <TableCell>{reservation.message || "N/A"}</TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              reservation.status === "pendiente"
-                                ? "warning"
-                                : reservation.status === "confirmada"
-                                ? "success"
-                                : "destructive"
-                            }
-                          >
-                            {reservation.status || "N/A"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {/* Aquí va el menú desplegable para cambiar el estado */}
-                          <select
-                            value={
-                              selectedStatus[reservation.id] ||
-                              reservation.status
-                            }
-                            onChange={(e) => {
-                              const newStatus = e.target.value as
-                                | "pendiente"
-                                | "confirmada"
-                                | "cancelada";
-                              setSelectedStatus((prev) => ({
-                                ...prev,
-                                [reservation.id]: newStatus,
-                              }));
-                              updateReservationStatus(
-                                reservation.id,
-                                reservation.date,
-                                reservation.time
-                              );
-                            }}
-                          >
-                            <option value="pendiente">Pendiente</option>
-                            <option value="confirmada">Confirmada</option>
-                            <option value="cancelada">Cancelada</option>
-                          </select>
-                        </TableCell>
+  <Badge
+    variant={
+      reservation.status === "pendiente"
+        ? "warning"
+        : reservation.status === "confirmada"
+        ? "success"
+        : "destructive"
+    }
+  >
+    {reservation.status || "N/A"}
+  </Badge>
+</TableCell>
+<TableCell>
+  <select
+    value={selectedStatus[reservation.id] || reservation.status}
+    onChange={async (e) => {
+      const newStatus = e.target.value as 
+        | "pendiente" 
+        | "confirmada" 
+        | "cancelada";
+      
+      // 1. Actualización optimista local
+      setSelectedStatus(prev => ({
+        ...prev,
+        [reservation.id]: newStatus
+      }));
+
+      // 2. Actualizar badge inmediatamente
+      setReservations(prev => prev.map(res => 
+        res.id === reservation.id 
+          ? { ...res, status: newStatus } 
+          : res
+      ));
+
+      try {
+        // 3. Enviar solo el nuevo estado al backend
+        await updateReservationStatus(reservation.id, reservation.date, reservation.time, newStatus);
+        
+        // 4. Sincronizar con base de datos
+        fetchReservations();
+      } catch (error) {
+        // 5. Revertir cambios locales en caso de error
+        setSelectedStatus(prev => ({
+          ...prev,
+          [reservation.id]: reservation.status
+        }));
+        
+        setReservations(prev => prev.map(res => 
+          res.id === reservation.id 
+            ? { ...res, status: reservation.status } 
+            : res
+        ));
+      }
+    }}
+  >
+    <option value="pendiente">Pendiente</option>
+    <option value="confirmada">Confirmada</option>
+    <option value="cancelada">Cancelada</option>
+  </select>
+</TableCell>
                         <TableCell>
                           <Button
                             variant="secondary"
