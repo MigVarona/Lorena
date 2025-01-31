@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useParams } from 'next/navigation'
+
 import {
   FaTrashAlt,
   FaSort,
@@ -57,8 +59,12 @@ interface BlockedDate {
 }
 
 export default function Dashboard() {
+  
+  const { id } = useParams<{ id: string }>();
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<{ [key: string]: "pendiente" | "confirmada" | "cancelada" }>({});
+  const [selectedStatus, setSelectedStatus] = useState<{
+    [key: string]: "pendiente" | "confirmada" | "cancelada";
+  }>({});
 
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,30 +91,27 @@ export default function Dashboard() {
     }
   };
 
-  const updateReservationStatus = async (id: string, status: "pendiente" | "confirmada" | "cancelada") => {
+  const updateReservationStatus = async (id: string, date: string, time: string, status: string) => {
     try {
       const response = await fetch(`/api/reservas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ date, time, status }), // Envía solo date/time
       });
-      const result = await response.json();
-  
-      if (response.ok) {
-        // Actualizar la reserva en el estado local
-        setReservations((prevReservations) =>
-          prevReservations.map((reservation) =>
-            reservation.id === id ? { ...reservation, status } : reservation
-          )
-        );
-      } else {
-        console.error("Error al actualizar el estado de la reserva:", result.error);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error al actualizar");
       }
+  
+      fetchReservations(); // Actualizar la lista
     } catch (error) {
-      console.error("Error al actualizar el estado:", error);
+      console.error("Error al actualizar:", error);
     }
   };
-
+  
+  
+  
 
   const addBlockedDate = async (date: Date | undefined) => {
     if (!date) return;
@@ -383,58 +386,94 @@ export default function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-      {reservations.map((reservation, index) => {
-        const key = reservation.id || `${reservation.name}-${reservation.date}-${index}`;
-        return (
-          <TableRow key={key}>
-            <TableCell>{reservation.name || "N/A"}</TableCell>
-            <TableCell>{reservation.email || "N/A"}</TableCell>
-            <TableCell>{reservation.date || "N/A"}</TableCell>
-            <TableCell>{reservation.time || "N/A"}</TableCell>
-            <TableCell>{reservation.phone || "N/A"}</TableCell>
-            <TableCell>{reservation.service || "N/A"}</TableCell>
-            <TableCell>{reservation.message || "N/A"}</TableCell>
-            <TableCell>
-              <Badge
-                variant={
-                  reservation.status === "pendiente"
-                    ? "warning"
-                    : reservation.status === "confirmada"
-                    ? "success"
-                    : "destructive"
-                }
-              >
-                {reservation.status || "N/A"}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {/* Aquí va el menú desplegable para cambiar el estado */}
-              <select
-                value={selectedStatus[reservation.id] || reservation.status}
-                onChange={(e) => {
-                  const newStatus = e.target.value as "pendiente" | "confirmada" | "cancelada";
-                  setSelectedStatus((prev) => ({
-                    ...prev,
-                    [reservation.id]: newStatus,
-                  }));
-                  updateReservationStatus(reservation.id, newStatus);
-                }}
-              >
-                <option value="pendiente">Pendiente</option>
-                <option value="confirmada">Confirmada</option>
-                <option value="cancelada">Cancelada</option>
-              </select>
-            </TableCell>
-            <TableCell>
-              <Button variant="secondary" size="sm">
-                <FaEdit className="mr-2 h-4 w-4" />
-                Editar
-              </Button>
-            </TableCell>
-          </TableRow>
-        );
-      })}
-    </TableBody>
+                  {reservations.map((reservation, index) => {
+                    const key =
+                      reservation.id ||
+                      `${reservation.name}-${reservation.date}-${index}`;
+                    return (
+                      <TableRow key={key}>
+                        <TableCell>{reservation.name || "N/A"}</TableCell>
+                        <TableCell>{reservation.email || "N/A"}</TableCell>
+                        <TableCell>{reservation.date || "N/A"}</TableCell>
+                        <TableCell>{reservation.time || "N/A"}</TableCell>
+                        <TableCell>{reservation.phone || "N/A"}</TableCell>
+                        <TableCell>{reservation.service || "N/A"}</TableCell>
+                        <TableCell>{reservation.message || "N/A"}</TableCell>
+                        <TableCell>
+  <Badge
+    variant={
+      reservation.status === "pendiente"
+        ? "warning"
+        : reservation.status === "confirmada"
+        ? "success"
+        : "destructive"
+    }
+  >
+    {reservation.status || "N/A"}
+  </Badge>
+</TableCell>
+<TableCell>
+  <select
+    value={selectedStatus[reservation.id] || reservation.status}
+    onChange={async (e) => {
+      const newStatus = e.target.value as 
+        | "pendiente" 
+        | "confirmada" 
+        | "cancelada";
+      
+      // 1. Actualización optimista local
+      setSelectedStatus(prev => ({
+        ...prev,
+        [reservation.id]: newStatus
+      }));
+
+      // 2. Actualizar badge inmediatamente
+      setReservations(prev => prev.map(res => 
+        res.id === reservation.id 
+          ? { ...res, status: newStatus } 
+          : res
+      ));
+
+      try {
+        // 3. Enviar solo el nuevo estado al backend
+        await updateReservationStatus(reservation.id, reservation.date, reservation.time, newStatus);
+        
+        // 4. Sincronizar con base de datos
+        fetchReservations();
+      } catch (error) {
+        // 5. Revertir cambios locales en caso de error
+        setSelectedStatus(prev => ({
+          ...prev,
+          [reservation.id]: reservation.status
+        }));
+        
+        setReservations(prev => prev.map(res => 
+          res.id === reservation.id 
+            ? { ...res, status: reservation.status } 
+            : res
+        ));
+      }
+    }}
+  >
+    <option value="pendiente">Pendiente</option>
+    <option value="confirmada">Confirmada</option>
+    <option value="cancelada">Cancelada</option>
+  </select>
+</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => handleEdit(reservation)}
+                          >
+                            <FaEdit className="mr-2 h-4 w-4" />
+                            Editar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
               </Table>
             </div>
           )}
