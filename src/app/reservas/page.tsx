@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useParams } from "next/navigation";
-import Image from "next/image";
+import { useParams } from 'next/navigation'
+
 import {
   FaTrashAlt,
   FaSort,
@@ -59,6 +59,7 @@ interface BlockedDate {
 }
 
 export default function Dashboard() {
+  
   const { id } = useParams<{ id: string }>();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<{
@@ -90,29 +91,27 @@ export default function Dashboard() {
     }
   };
 
-  const updateReservationStatus = async (
-    id: string,
-    date: string,
-    time: string,
-    status: string
-  ) => {
+  const updateReservationStatus = async (id: string, date: string, time: string, status: string) => {
     try {
       const response = await fetch(`/api/reservas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date, time, status }), // Envía solo date/time
       });
-
+      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al actualizar");
       }
-
+  
       fetchReservations(); // Actualizar la lista
     } catch (error) {
       console.error("Error al actualizar:", error);
     }
   };
+  
+  
+  
 
   const addBlockedDate = async (date: Date | undefined) => {
     if (!date) return;
@@ -250,100 +249,58 @@ export default function Dashboard() {
   return (
     <div className="font-sans text-black p-8 bg-gray-100 min-h-screen">
       <Card className="mb-8">
-        <CardHeader className="flex items-center mb-6 justify-center">
-          <Image
-            src="/Lorena Varona Logo.png"
-            alt="Lorena Varona"
-            width={90}
-            height={50}
-            className="custom-class mt-10"
-          />{" "}
+        <CardHeader>
+          <CardTitle className="text-3xl font-semibold text-center">
+            Dashboard de Reservas
+          </CardTitle>
         </CardHeader>
-
         <CardContent>
-          <div className="mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-            <h2 className="text-xl sm:text-2xl font-semibold">
-              Fechas Bloqueadas
-            </h2>
-
-            {/* Botón arriba en pantallas grandes */}
-            <Popover open={isAddingDate} onOpenChange={setIsAddingDate}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="hidden sm:flex">
-                  <FaPlus className="mr-2" />
-                  Agregar Fecha
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-auto" align="center">
-                <Calendar
-                  selected={
-                    newBlockedDate ? new Date(newBlockedDate) : undefined
-                  }
-                  onSelect={addBlockedDate}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="flex flex-col-reverse sm:flex-col gap-4">
-            {/* Lista de Fechas Bloqueadas */}
-            {blockedDates.length === 0 ? (
-              <div className="text-center py-4 text-gray-500 text-sm">
-                No hay fechas bloqueadas
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-2">
-                {blockedDates.map((blockedDate) => (
-                  <div
-                    key={blockedDate.id}
-                    className="flex items-center justify-between bg-white p-3 rounded-lg shadow-xs"
-                  >
-                    <div className="flex items-center flex-1 min-w-0">
-                      <FaCalendarAlt className="text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="font-medium text-sm truncate">
-                        {format(
-                          new Date(blockedDate.date),
-                          "d 'de' MMM. yyyy",
-                          {
-                            locale: es,
-                          }
-                        )}
-                      </span>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeBlockedDate(blockedDate.date)}
-                      className="text-red-500 hover:text-red-700 ml-2 flex-shrink-0"
-                    >
-                      <FaTrashAlt className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Botón abajo en pantallas pequeñas */}
-            <Popover open={isAddingDate} onOpenChange={setIsAddingDate}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex sm:hidden self-start"
+          <div className="mb-8">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">Fechas Bloqueadas</h2>
+              <Popover open={isAddingDate} onOpenChange={setIsAddingDate}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">
+                    <FaPlus className="mr-2" /> Agregar Fecha Bloqueada
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto" align="end">
+                  <Calendar
+                    selected={
+                      newBlockedDate ? new Date(newBlockedDate) : undefined
+                    }
+                    onSelect={(date) => {
+                      addBlockedDate(date);
+                    }}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {blockedDates.map((blockedDate) => (
+                <div
+                  key={blockedDate.id}
+                  className="flex items-center justify-between bg-white p-3 rounded-md shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <FaPlus className="mr-2" />
-                  Nueva
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full sm:w-auto" align="center">
-                <Calendar
-                  selected={
-                    newBlockedDate ? new Date(newBlockedDate) : undefined
-                  }
-                  onSelect={addBlockedDate}
-                />
-              </PopoverContent>
-            </Popover>
+                  <div className="flex items-center">
+                    <FaCalendarAlt className="text-gray-400 mr-2" />
+                    <span className="font-medium">
+                      {format(new Date(blockedDate.date), "d MMM yyyy", {
+                        locale: es,
+                      })}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeBlockedDate(blockedDate.date)}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                  >
+                    <FaTrashAlt />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
@@ -413,15 +370,9 @@ export default function Dashboard() {
                         <FaSort className="inline ml-1" />
                       )}
                     </TableHead>
-                    <TableHead className="hidden sm:table-cell">
-                      Email
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Teléfono
-                    </TableHead>
-                    <TableHead className="hidden lg:table-cell">
-                      Mensaje
-                    </TableHead>
+                    <TableHead>Teléfono</TableHead>
+                    <TableHead>Servicio</TableHead>
+                    <TableHead>Mensaje</TableHead>
                     <TableHead
                       className="cursor-pointer"
                       onClick={() => handleSort("status")}
@@ -449,78 +400,66 @@ export default function Dashboard() {
                         <TableCell>{reservation.service || "N/A"}</TableCell>
                         <TableCell>{reservation.message || "N/A"}</TableCell>
                         <TableCell>
-                          <Badge
-                            variant={
-                              reservation.status === "pendiente"
-                                ? "warning"
-                                : reservation.status === "confirmada"
-                                ? "success"
-                                : "destructive"
-                            }
-                          >
-                            {reservation.status || "N/A"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <select
-                            value={
-                              selectedStatus[reservation.id] ||
-                              reservation.status
-                            }
-                            onChange={async (e) => {
-                              const newStatus = e.target.value as
-                                | "pendiente"
-                                | "confirmada"
-                                | "cancelada";
+  <Badge
+    variant={
+      reservation.status === "pendiente"
+        ? "warning"
+        : reservation.status === "confirmada"
+        ? "success"
+        : "destructive"
+    }
+  >
+    {reservation.status || "N/A"}
+  </Badge>
+</TableCell>
+<TableCell>
+  <select
+    value={selectedStatus[reservation.id] || reservation.status}
+    onChange={async (e) => {
+      const newStatus = e.target.value as 
+        | "pendiente" 
+        | "confirmada" 
+        | "cancelada";
+      
+      // 1. Actualización optimista local
+      setSelectedStatus(prev => ({
+        ...prev,
+        [reservation.id]: newStatus
+      }));
 
-                              // 1. Actualización optimista local
-                              setSelectedStatus((prev) => ({
-                                ...prev,
-                                [reservation.id]: newStatus,
-                              }));
+      // 2. Actualizar badge inmediatamente
+      setReservations(prev => prev.map(res => 
+        res.id === reservation.id 
+          ? { ...res, status: newStatus } 
+          : res
+      ));
 
-                              // 2. Actualizar badge inmediatamente
-                              setReservations((prev) =>
-                                prev.map((res) =>
-                                  res.id === reservation.id
-                                    ? { ...res, status: newStatus }
-                                    : res
-                                )
-                              );
-
-                              try {
-                                // 3. Enviar solo el nuevo estado al backend
-                                await updateReservationStatus(
-                                  reservation.id,
-                                  reservation.date,
-                                  reservation.time,
-                                  newStatus
-                                );
-
-                                // 4. Sincronizar con base de datos
-                                fetchReservations();
-                              } catch (error) {
-                                // 5. Revertir cambios locales en caso de error
-                                setSelectedStatus((prev) => ({
-                                  ...prev,
-                                  [reservation.id]: reservation.status,
-                                }));
-
-                                setReservations((prev) =>
-                                  prev.map((res) =>
-                                    res.id === reservation.id
-                                      ? { ...res, status: reservation.status }
-                                      : res
-                                  )
-                                );
-                              }
-                            }}
-                          >
-                            <option value="pendiente">Pendiente</option>
-                            <option value="confirmada">Confirmada</option>
-                            <option value="cancelada">Cancelada</option>
-                          </select>
-                        </TableCell>
+      try {
+        // 3. Enviar solo el nuevo estado al backend
+        await updateReservationStatus(reservation.id, reservation.date, reservation.time, newStatus);
+        
+        // 4. Sincronizar con base de datos
+        fetchReservations();
+      } catch (error) {
+        // 5. Revertir cambios locales en caso de error
+        setSelectedStatus(prev => ({
+          ...prev,
+          [reservation.id]: reservation.status
+        }));
+        
+        setReservations(prev => prev.map(res => 
+          res.id === reservation.id 
+            ? { ...res, status: reservation.status } 
+            : res
+        ));
+      }
+    }}
+  >
+    <option value="pendiente">Pendiente</option>
+    <option value="confirmada">Confirmada</option>
+    <option value="cancelada">Cancelada</option>
+  </select>
+</TableCell>
                         <TableCell>
                           <Button
                             variant="secondary"
@@ -541,22 +480,24 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-wrap justify-center gap-2 mt-4">
-        <Button variant="outline" size="sm">
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="mr-2"
+        >
           Anterior
         </Button>
-        <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <Button
-              key={i}
-              variant={currentPage === i + 1 ? "default" : "outline"}
-              size="sm"
-            >
-              {i + 1}
-            </Button>
-          ))}
-        </div>
-        <Button variant="outline" size="sm">
+        <span className="mx-4 self-center">
+          Página {currentPage} de {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="ml-2"
+        >
           Siguiente
         </Button>
       </div>
