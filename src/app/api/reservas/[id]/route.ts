@@ -59,58 +59,64 @@ export async function GET() {
   }
 }
 
-// PUT: Actualizar estado de reserva
-export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
-  // Aseguramos que `params` se espere correctamente
-  const { id } = await context.params;
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "Falta el ID de la reserva" },
-      { status: 400 }
-    );
-  }
-
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> } // <-- Cambio clave aquí
+) {
   try {
+    // 1. Esperar explícitamente los parámetros
+    const { id } = await params; // <-- Uso correcto con await
+    
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID de reserva requerido" },
+        { status: 400 }
+      );
+    }
+
+    // 2. Procesar el cuerpo
     const body = await request.json();
-    const { status } = body;
+    console.log("Datos recibidos:", body);
 
-    if (!status) {
+    // 3. Validación mejorada
+    const updateData: Record<string, any> = {};
+    if (body.status) {
+      const validStatuses = ["pendiente", "confirmada", "cancelada"];
+      if (!validStatuses.includes(body.status)) {
+        return NextResponse.json(
+          { error: "Estado no válido" },
+          { status: 400 }
+        );
+      }
+      updateData.status = body.status;
+    }
+    
+    if (body.date) updateData.date = body.date;
+    if (body.time) updateData.time = body.time;
+
+    if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
-        { error: "Falta el estado de la reserva" },
+        { error: "Sin campos para actualizar" },
         { status: 400 }
       );
     }
 
-    // Validación simple para el estado
-    const validStatuses = ["pendiente", "confirmada", "cancelada"];
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: "Estado no válido" },
-        { status: 400 }
-      );
-    }
-
-    // Actualización del estado de la reserva en la base de datos
+    // 4. Ejecutar actualización
     const { data, error } = await supabase
       .from("reservas")
-      .update({ status })
+      .update(updateData)
       .eq("id", id);
 
-    if (error) {
-      console.error("Error al actualizar el estado de la reserva:", error.message);
-      return NextResponse.json(
-        { error: "Error al actualizar el estado de la reserva" },
-        { status: 500 }
-      );
-    }
+    if (error) throw error;
 
     return NextResponse.json({ success: true, data });
+    
   } catch (error) {
     console.error("Error en el servidor:", error);
     return NextResponse.json(
-      { error: "Error en el servidor" },
+      { error: "Error interno del servidor" },
       { status: 500 }
     );
   }
 }
+
