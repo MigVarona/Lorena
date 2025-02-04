@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useParams } from 'next/navigation'
+import { useParams } from "next/navigation";
 
 import {
   FaTrashAlt,
@@ -59,7 +59,6 @@ interface BlockedDate {
 }
 
 export default function Dashboard() {
-  
   const { id } = useParams<{ id: string }>();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<{
@@ -91,27 +90,29 @@ export default function Dashboard() {
     }
   };
 
-  const updateReservationStatus = async (id: string, date: string, time: string, status: string) => {
+  const updateReservationStatus = async (
+    id: string,
+    date: string,
+    time: string,
+    status: string
+  ) => {
     try {
       const response = await fetch(`/api/reservas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ date, time, status }), // Envía solo date/time
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Error al actualizar");
       }
-  
+
       fetchReservations(); // Actualizar la lista
     } catch (error) {
       console.error("Error al actualizar:", error);
     }
   };
-  
-  
-  
 
   const addBlockedDate = async (date: Date | undefined) => {
     if (!date) return;
@@ -400,66 +401,78 @@ export default function Dashboard() {
                         <TableCell>{reservation.service || "N/A"}</TableCell>
                         <TableCell>{reservation.message || "N/A"}</TableCell>
                         <TableCell>
-  <Badge
-    variant={
-      reservation.status === "pendiente"
-        ? "warning"
-        : reservation.status === "confirmada"
-        ? "success"
-        : "destructive"
-    }
-  >
-    {reservation.status || "N/A"}
-  </Badge>
-</TableCell>
-<TableCell>
-  <select
-    value={selectedStatus[reservation.id] || reservation.status}
-    onChange={async (e) => {
-      const newStatus = e.target.value as 
-        | "pendiente" 
-        | "confirmada" 
-        | "cancelada";
-      
-      // 1. Actualización optimista local
-      setSelectedStatus(prev => ({
-        ...prev,
-        [reservation.id]: newStatus
-      }));
+                          <Badge
+                            variant={
+                              reservation.status === "pendiente"
+                                ? "warning"
+                                : reservation.status === "confirmada"
+                                ? "success"
+                                : "destructive"
+                            }
+                          >
+                            {reservation.status || "N/A"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <select
+                            value={
+                              selectedStatus[reservation.id] ||
+                              reservation.status
+                            }
+                            onChange={async (e) => {
+                              const newStatus = e.target.value as
+                                | "pendiente"
+                                | "confirmada"
+                                | "cancelada";
 
-      // 2. Actualizar badge inmediatamente
-      setReservations(prev => prev.map(res => 
-        res.id === reservation.id 
-          ? { ...res, status: newStatus } 
-          : res
-      ));
+                              // 1. Actualización optimista local
+                              setSelectedStatus((prev) => ({
+                                ...prev,
+                                [reservation.id]: newStatus,
+                              }));
 
-      try {
-        // 3. Enviar solo el nuevo estado al backend
-        await updateReservationStatus(reservation.id, reservation.date, reservation.time, newStatus);
-        
-        // 4. Sincronizar con base de datos
-        fetchReservations();
-      } catch (error) {
-        // 5. Revertir cambios locales en caso de error
-        setSelectedStatus(prev => ({
-          ...prev,
-          [reservation.id]: reservation.status
-        }));
-        
-        setReservations(prev => prev.map(res => 
-          res.id === reservation.id 
-            ? { ...res, status: reservation.status } 
-            : res
-        ));
-      }
-    }}
-  >
-    <option value="pendiente">Pendiente</option>
-    <option value="confirmada">Confirmada</option>
-    <option value="cancelada">Cancelada</option>
-  </select>
-</TableCell>
+                              // 2. Actualizar badge inmediatamente
+                              setReservations((prev) =>
+                                prev.map((res) =>
+                                  res.id === reservation.id
+                                    ? { ...res, status: newStatus }
+                                    : res
+                                )
+                              );
+
+                              try {
+                                // 3. Enviar solo el nuevo estado al backend
+                                await updateReservationStatus(
+                                  reservation.id,
+                                  reservation.date,
+                                  reservation.time,
+                                  newStatus
+                                );
+
+                                // 4. Sincronizar con base de datos
+                                fetchReservations();
+                              } catch (error) {
+                                // 5. Revertir cambios locales en caso de error
+                                setSelectedStatus((prev) => ({
+                                  ...prev,
+                                  [reservation.id]: reservation.status,
+                                }));
+
+                                setReservations((prev) =>
+                                  prev.map((res) =>
+                                    res.id === reservation.id
+                                      ? { ...res, status: reservation.status }
+                                      : res
+                                  )
+                                );
+                              }
+                            }}
+                          >
+                            <option value="pendiente">Pendiente</option>
+                            <option value="confirmada">Confirmada</option>
+                            <option value="cancelada">Cancelada</option>
+                          </select>
+                        </TableCell>
                         <TableCell>
                           <Button
                             variant="secondary"
